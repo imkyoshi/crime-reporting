@@ -1,0 +1,32 @@
+#icon {
+    color: #3f6791;
+}
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+    
+        .password-input {
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            flex-grow: 1;
+        }
+    
+        .toggle-password {
+            cursor: pointer;
+            border: none;
+            background: none;
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+            color: #007bff;
+            /* Change color to your desired button color */
+        }
+    
+        .toggle-password:hover {
+            text-decoration: underline;
+            /* Add underline on hover */
+        }
