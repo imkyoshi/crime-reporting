@@ -17,24 +17,30 @@
 
     function retrieveRecords() {
         global $mysqli;
-
+    
         $sql = "SELECT u.email, c.CrimeType
                 FROM users AS u
                 INNER JOIN crime_category AS c ON (u.id = c.categoryID)";     
-
+    
         $result = $mysqli->query($sql);
-
+    
+        $records = array(); // Initialize an array to store all records
+    
         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $email = $row["email"];
-            $crimetype = $row["CrimeType"];
+            while ($row = $result->fetch_assoc()) {
+                $records[] = array(
+                    "email" => $row["email"],
+                    "crimeType" => $row["CrimeType"]
+                );
+            }
         } else {
             // Handle the case where no records are found
-            $email = "";
-            $crimetype = "";
-        }
+            // You can leave $records as an empty array in this case
 
-        return array("email" => $email, "crimeType" => $crimetype);
+            
+        }
+    
+        return $records;
     }
 
     function handleFileUpload($inputName, $uploadDir)
@@ -43,6 +49,12 @@
         if (!empty($_FILES[$inputName]['name'])) {
             $fileName = $_FILES[$inputName]['name'];
             $filePath = $uploadDir . $fileName;
+
+        // Ensure the target directory exists
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        $filePath = $uploadDir . $fileName;
 
             // Move the uploaded file to the specified directory
             move_uploaded_file($_FILES[$inputName]['tmp_name'], $filePath);
@@ -57,15 +69,15 @@
     {
         global $mysqli;
     
-        $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE email = ? AND CrimeType = ?");
-        $stmt->bind_param("ss", $email, $crimetype);
+        $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE suspectName = ? AND statement = ?");
+        $stmt->bind_param("ss", $suspectName, $statement);
         $stmt->execute();
         $stmt->bind_result($count);
         $stmt->fetch();
         $stmt->close();
     
         if ($count > 0) {
-            return "Crime Information with this email already exists.";
+            return "Crime Information with this suspect name already exists.";
         }
     
         $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");

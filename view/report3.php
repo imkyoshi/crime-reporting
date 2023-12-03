@@ -15,7 +15,7 @@ require_once '../includes/report3_functions.php';
 $user_id = $_SESSION['user_id'];
 // Retrieve user information from the database
 $user = getUserById($user_id);
-$data = retrieveRecords();
+$records = retrieveRecords();
 // Handle logout request
 if (isset($_GET['logout'])) {
     // Unset all session variables
@@ -34,8 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve form data
     $email = $_POST['email'];
     $formFileValidID  = handleFileUpload('formFileValidID',
-    __DIR__ . DIRECTORY_SEPARATOR . '..' 
-    . DIRECTORY_SEPARATOR . 'dist' 
+    __DIR__ . DIRECTORY_SEPARATOR . 'dist' 
     . DIRECTORY_SEPARATOR . 'uploads' 
     . DIRECTORY_SEPARATOR . 'valid_ids' 
     . DIRECTORY_SEPARATOR);
@@ -46,8 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $crimetype = $_POST['crimetype'];
     $statement = $_POST['statement'];
     $formFileEvidence = handleFileUpload('formFileEvidence', 
-                    __DIR__ . DIRECTORY_SEPARATOR . '..' 
-                    . DIRECTORY_SEPARATOR . 'dist' 
+                    __DIR__ . DIRECTORY_SEPARATOR . 'dist' 
                     . DIRECTORY_SEPARATOR . 'uploads' 
                     . DIRECTORY_SEPARATOR . 'evidences' 
                     . DIRECTORY_SEPARATOR);
@@ -148,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row align-items-center justify-content-center">
                 <div class="col-lg-10">
                     <div class="card">
-                        <form method="POST" action="../view/report3.php">
+                        <form method="POST" action="../view/report3.php" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="card-header bg-white">
                                     <h4 class="text-center">Report Crime</h4>
@@ -229,13 +227,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="form-group">
                                         <label for="typeOfCrime">Type of Crime:</label>
                                         <select class="form-control" id="crimetype" name="crimetype">
-                                            <option value="<?php echo $data['crimeType']; ?>" selected>
-                                                <?php echo $data['crimeType']; ?>
-                                            </option>
-                                            <!-- Add other options if needed -->
+                                            <?php
+                                            $records = retrieveRecords();
+
+                                            if (empty($records)) {
+                                                echo '<option value="" disabled>No crime types found</option>';
+                                            } else {
+                                                foreach ($records as $record) {
+                                                    echo '<option value="' . $record['crimeType'] . '">' . $record['crimeType'] . '</option>';
+                                                }
+                                            }
+                                            ?>
                                         </select>
                                     </div>
                                 </div>
+
 
                                 <div class="col-md-12">
                                     <div class="form-group">

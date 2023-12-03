@@ -9,9 +9,9 @@ if (!isset($_SESSION['user_id'])) {
 
 // Include database connection and functions files
 require_once '../config/db.php';
-require_once '../includes/resident_functions.php';
+require_once '../includes/crimeinfo_functions.php';
 
-$residents = getAllResidents();
+$crimeinfo = getAllCrimeInfo();
 $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
 
@@ -36,18 +36,18 @@ if (isset($_GET['logout'])) {
 
 $limit = isset($_GET['showRecords']) ? intval($_GET['showRecords']) : 5;
 
-$totalResidents = getTotalResidentCount();
+$totalCrimeinfo = getTotalCrimeInfoCount();
 $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $totalPages = 3;
 $startIndex = ($currentPage - 1) * $limit;
 $endIndex = min($startIndex + $limit, $totalResidents);
-$residents = getResidentsWithLimitAndOffset($limit, $startIndex);
+$crimeinfos = getCrimeInfoWithLimitAndOffset($limit, $startIndex);
 $paginationLinks = generatePaginationLinks($currentPage, $totalPages);
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
     $search = $_GET['search'];
 
     if (!empty($search)) {
-        $residents = getresidentsWithSearchLimitAndOffset($search, $limit, $startIndex);
+        $crimeinfos = getCrimeInfoWithSearchLimitAndOffset($search, $limit, $startIndex);
     }
 }
 ?>
@@ -189,34 +189,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                             <table class="table" id="residentTable">
                                 <thead>
                                     <tr>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Date of Birth</th>
-                                        <th>Address</th>
-                                        <th>Phone Number</th>
                                         <th>Email</th>
+                                        <th>Date and Time of Report</th>
+                                        <th>Date and Time of Incident</th>
+                                        <th>Place of Incident</th>
+                                        <th>Suspect Name</th>
+                                        <th>Type of Crime</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($residents as $resident): ?>
+                                    <?php foreach ($crimeinfos as $crimeinfo): ?>
                                         <tr>
                                             <td>
-                                                <?php echo $resident['firstName']; ?>
+                                                <?php echo $crimeinfo['email']; ?>
                                             </td>
                                             <td>
-                                                <?php echo $resident['lastName']; ?>
+                                                <?php echo $crimeinfo['dateTimeOfReport']; ?>
                                             </td>
                                             <td>
-                                                <?php echo $resident['dateOfBirth']; ?>
+                                                <?php echo $crimeinfo['dateTimeOfIncident']; ?>
                                             </td>
                                             <td>
-                                                <?php echo $resident['address']; ?>
+                                                <?php echo $crimeinfo['placeOfIncident']; ?>
                                             </td>
                                             <td>
-                                                <?php echo $resident['phoneNumber']; ?>
+                                                <?php echo $crimeinfo['suspectName']; ?>
                                             </td>
                                             <td>
-                                                <?php echo $resident['email']; ?>
+                                                <?php echo $crimeinfo['CrimeType']; ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $crimeinfo['status']; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -230,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                     Showing
                                     <?php echo $startIndex + 1; ?> to
                                     <?php echo $endIndex; ?> of
-                                    <?php echo $totalResidents; ?> entries
+                                    <?php echo $totalCrimeinfo; ?> entries
                                 </p>
                             </div>
                             <!-- PAGINATION -->
