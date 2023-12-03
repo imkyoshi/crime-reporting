@@ -31,62 +31,64 @@ function getAllCrimeInfo()
     return $residents;
 }
 
-function addCrimeReport($firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email)
-{
-    global $mysqli;
 
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE firstName = ? AND lastName = ?");
-    $stmt->bind_param("ss", $firstName, $lastName);
-    $stmt->execute();
-    $stmt->bind_result($count);
-    $stmt->fetch();
-    $stmt->close();
 
-    if ($count > 0) {
-        return "Resident with this name already exists.";
-    }
+// function addCrimeReport($firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email)
+// {
+//     global $mysqli;
 
-    $stmt = $mysqli->prepare("INSERT INTO resident_information (firstName, lastName, dateOfBirth, address, phoneNumber, email) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssss", $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email);
-    $result = $stmt->execute();
-    $stmt->close();
+//     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE firstName = ? AND lastName = ?");
+//     $stmt->bind_param("ss", $firstName, $lastName);
+//     $stmt->execute();
+//     $stmt->bind_result($count);
+//     $stmt->fetch();
+//     $stmt->close();
 
-    if ($result) {
-        return "Resident added successfully.";
-    } else {
-        return "Failed to add resident.";
-    }
-}
+//     if ($count > 0) {
+//         return "Resident with this name already exists.";
+//     }
 
-function updateResident($resident_id, $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email)
-{
-    global $mysqli;
+//     $stmt = $mysqli->prepare("INSERT INTO resident_information (firstName, lastName, dateOfBirth, address, phoneNumber, email) VALUES (?, ?, ?, ?, ?, ?)");
+//     $stmt->bind_param("ssssss", $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email);
+//     $result = $stmt->execute();
+//     $stmt->close();
 
-    $sql = "UPDATE resident_information SET firstName=?, lastName=?, dateOfBirth=?, address=?, phoneNumber=?, email=?
-            WHERE resident_id=?";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ssssssi", $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email, $resident_id);
-    $result = $stmt->execute();
+//     if ($result) {
+//         return "Resident added successfully.";
+//     } else {
+//         return "Failed to add resident.";
+//     }
+// }
 
-    return $result;
-}
+// function updateResident($resident_id, $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email)
+// {
+//     global $mysqli;
 
-function deleteResident($resident_id)
-{
-    global $mysqli;
+//     $sql = "UPDATE resident_information SET firstName=?, lastName=?, dateOfBirth=?, address=?, phoneNumber=?, email=?
+//             WHERE resident_id=?";
+//     $stmt = $mysqli->prepare($sql);
+//     $stmt->bind_param("ssssssi", $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email, $resident_id);
+//     $result = $stmt->execute();
 
-    $sql = "DELETE FROM resident_information WHERE resident_id=?";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("i", $resident_id);
-    $result = $stmt->execute();
+//     return $result;
+// }
 
-    if ($result) {
-        $sql = "ALTER TABLE resident_information AUTO_INCREMENT = 1";
-        $mysqli->query($sql);
-    }
+// function deleteResident($resident_id)
+// {
+//     global $mysqli;
 
-    return $result;
-}
+//     $sql = "DELETE FROM resident_information WHERE resident_id=?";
+//     $stmt = $mysqli->prepare($sql);
+//     $stmt->bind_param("i", $resident_id);
+//     $result = $stmt->execute();
+
+//     if ($result) {
+//         $sql = "ALTER TABLE resident_information AUTO_INCREMENT = 1";
+//         $mysqli->query($sql);
+//     }
+
+//     return $result;
+// }
 
 function getCrimeInfoWithLimitAndOffset($limit, $offset)
 {

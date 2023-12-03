@@ -1,6 +1,35 @@
 <?php
 require_once '../config/db.php';
 
+
+function retrieveRecords() {
+    global $mysqli;
+
+    $sql = "SELECT u.email, c.CrimeType
+            FROM users AS u
+            INNER JOIN crime_category AS c ON (u.id = c.categoryID)";     
+
+    $result = $mysqli->query($sql);
+
+    $records = array(); // Initialize an array to store all records
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $records[] = array(
+                "email" => $row["email"],
+                "crimeType" => $row["CrimeType"]
+            );
+        }
+    } else {
+        // Handle the case where no records are found
+        // You can leave $records as an empty array in this case
+
+        
+    }
+
+    return $records;
+}
+
 function getUserById($userId)
 {
     global $mysqli;

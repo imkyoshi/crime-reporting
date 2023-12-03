@@ -123,7 +123,7 @@ if (isset($_GET['logout'])) {
                 <div class="carousel-caption">
                     <h5>Welcome to our <span class="text-warning"> Crime Reporting website </span></h5>
                     <p>We are committed to delivering the highest degree of professional police services in the municipality.</p>
-                    <p><a href="view/report.php" class="btn btn-warning mt-3">Report a crime</a></p>
+                    <p><a href="view/report3.php" class="btn btn-warning mt-3">Report a crime</a></p>
                 </div>
             </div>
             <div class="carousel-item">
@@ -131,7 +131,7 @@ if (isset($_GET['logout'])) {
                 <div class="carousel-caption">
                     <h5>Report <span class="text-warning">Now! </span></h5></h5>
                     <p>We are committed to delivering the highest degree of professional police services in the municipality</p>
-                    <p><a href="view/report.php" class="btn btn-warning mt-3">Report a crime</a></p>
+                    <p><a href="view/report3.php" class="btn btn-warning mt-3">Report a crime</a></p>
                 </div>
             </div>
         </div>

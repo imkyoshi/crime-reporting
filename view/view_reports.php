@@ -109,16 +109,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="../view/view_reports.php">My Reports List</a>
+                            <a class="nav-link" href="../view_reports.php">My Reports List</a>
                         </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <?php echo $user['username']; ?>
                                          </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                             <a class="dropdown-item" href="#">My Profile</a>
+                                             <a class="dropdown-item" href="../auth/user_profile.php">My Profile</a>
                                              <div class="dropdown-divider"></div>
-                                             <a class="dropdown-item" href="index.php?logout=true">Log Out</a>
+                                             <a class="dropdown-item" href="../index.php?logout=true">Log Out</a>
                                      </div>
                             </li>
                     <?php else: ?>
@@ -189,7 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                             <table class="table" id="residentTable">
                                 <thead>
                                     <tr>
-                                        <th>Email</th>
                                         <th>Date and Time of Report</th>
                                         <th>Date and Time of Incident</th>
                                         <th>Place of Incident</th>
@@ -201,9 +200,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                 <tbody>
                                     <?php foreach ($crimeinfos as $crimeinfo): ?>
                                         <tr>
-                                            <td>
-                                                <?php echo $crimeinfo['email']; ?>
-                                            </td>
                                             <td>
                                                 <?php echo $crimeinfo['dateTimeOfReport']; ?>
                                             </td>
