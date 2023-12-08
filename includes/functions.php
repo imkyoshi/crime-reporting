@@ -243,6 +243,21 @@ function getTotalResidentCount()
     return 0;
 }
 
+function getTotalCrimeInfoCount()
+{
+    global $mysqli;
+
+    $query = "SELECT COUNT(*) as total FROM crime_information";
+    $result = $mysqli->query($query);
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    }
+
+    return 0;
+}
+
 // Function to generate the pagination links
 function generatePaginationLinks($currentPage, $totalPages)
 {

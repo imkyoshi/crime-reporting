@@ -18,6 +18,7 @@ $users = getAllUsers();
 $totalUsers = getTotalUserCount();
 $totalCrimeCategories = getTotalCrimeCategoryCount();
 $totalResidents = getTotalResidentCount();
+$totalCrimeinfo = getTotalCrimeInfoCount();
 
 $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
@@ -191,8 +192,7 @@ $currentUserInfo = getUserById($currentUserID);
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
-                                    <h3>0</h3>
-
+                                    <h3><?php echo $totalCrimeinfo; ?></h3>
                                     <p>Crime Info</p>
                                 </div>
                                 <div class="icon" id="icon">
