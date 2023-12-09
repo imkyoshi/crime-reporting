@@ -252,7 +252,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <button type="button" class="btn btn-primary btn-sm float-left"
                                                 data-toggle="modal" data-target="#addResidentModal"><i
                                                     class="las la-plus-circle"></i> Add New Resident</button>
-                                                <button type="button" class="btn btn-success btn-sm float-left" style="margin-left:10px;"><i class="las la-print"></i> Print</button>
+                                                <button type="button" class="btn btn-success btn-sm float-left" onClick="window.print()" style="margin-left:10px;"><i class="las la-print"></i> Print</button>
                                         </div>
 
 

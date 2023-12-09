@@ -98,7 +98,6 @@ function getAllUsers()
 }
 
 // Function to add a new user
-// Function to add a new user
 function addUser($username, $password, $email, $roles)
 {
     global $mysqli;

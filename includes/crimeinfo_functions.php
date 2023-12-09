@@ -1,6 +1,42 @@
 <?php
 require_once '../config/db.php';
 
+
+
+function retrieveRecords() {
+    global $mysqli;
+
+    $sql = "SELECT users.email, CONCAT (resident_information.firstName, ' ', resident_information.lastName) AS fullName,crime_information.dateTimeOfReport,
+            crime_information.dateTimeOfIncident, crime_information.placeOfIncident, crime_information.suspectName, crime_information.status
+            FROM crime_information
+            JOIN users ON crime_information.crime_id = users.id
+            JOIN resident_information ON crime_information.crime_id = resident_information.resident_id
+            WHERE crime_information.crime_id;";    
+
+    $result = $mysqli->query($sql);
+    $records = array(); // Initialize an array to store all records
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $records[] = array(
+                "email" => $row["email"],
+                "fullName" => $row["fullName"],
+                "dateTimeOfReport" => $row["dateTimeOfReport"],
+                "dateTimeOfIncident" => $row["dateTimeOfIncident"],
+                "placeOfIncident" => $row["placeOfIncident"],
+                "suspectName" => $row["suspectName"],
+                "status" => $row["status"]
+            );
+        }
+    } else {
+        // Handle the case where no records are found
+        // You can leave $records as an empty array in this case        
+    }
+
+    return $records;
+}
+
+
 function getUserById($userId)
 {
     global $mysqli;
@@ -116,7 +152,7 @@ function getCrimeInfoWithSearchLimitAndOffset($search, $limit, $offset)
     global $mysqli;
 
     $search = "%" . $search . "%";
-    $sql = "SELECT * FROM crime_information WHERE email LIKE ? OR suspectName LIKE ? LIMIT ? OFFSET ?";
+    $sql = "SELECT * FROM crime_information WHERE CrimeType LIKE ? OR suspectName LIKE ? LIMIT ? OFFSET ?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("ssii", $search, $search, $limit, $offset);
     $stmt->execute();

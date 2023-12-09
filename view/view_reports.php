@@ -113,13 +113,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                         </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?php echo $user['username']; ?>
-                                         </a>
+                                <?php echo $user['username']; ?></a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                             <a class="dropdown-item" href="../auth/user_profile.php">My Profile</a>
-                                             <div class="dropdown-divider"></div>
-                                             <a class="dropdown-item" href="../index.php?logout=true">Log Out</a>
-                                     </div>
+                                            <a class="dropdown-item" href="../auth/user_profile.php">My Profile</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="../index.php?logout=true">Log Out</a>
+                                    </div>
                             </li>
                     <?php else: ?>
                         <li class="nav-item">

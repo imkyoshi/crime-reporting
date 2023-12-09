@@ -388,12 +388,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <?php echo $user['username']; ?>
                                   </td>
                                   <td>
-                                <input type="password" value="<?php echo $user['password']; ?>" readonly class="password-input">
-                                          <span class="toggle-password" onclick="togglePasswordVisibility()">
-                                                     <i class="las la-eye"></i>
-                                                 </span>
-                                          </td>
-                                          <td>
+                                    <input type="password" value="<?php echo $user['password']; ?>" readonly class="password-input">
+                                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                                      <i class="las la-eye"></i>
+                                    </span>
+                                  </td>
+                                  <td>
                                     <?php echo $user['email']; ?>
                                   </td>
                                   <td>

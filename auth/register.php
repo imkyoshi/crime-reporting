@@ -66,11 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
+                <li class="nav-item">
                         <a class="nav-link" href="../index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About Us</a>
+                        <a class="nav-link" href="../index.php#about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                            <a class="nav-link" href="../index.php#services">Services</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
@@ -80,14 +83,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarDarkDropdownMenuLink">
                             <li><a class="dropdown-item" href="https://pnpclearance.ph/">NBI Clearance</a></li>
                             <li><a class="dropdown-item" href="https://feo.pnp.gov.ph/">Firearms Licensing</a></li>
-                            <li><a class="dropdown-item"
-                                    href="https://prod10.ebpls.com/sanluisbatangas/index.php">Business
-                                    Permits & Licensing
-                                    System</a></li>
+                            <li><a class="dropdown-item" href="https://prod10.ebpls.com/sanluisbatangas/index.php">
+                            Business Permits</a>
+                            </li>
                         </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#services">Report Guideline</a>
                     </li>
                 </ul>
             </div>
