@@ -2,39 +2,66 @@
 require_once '../config/db.php';
 
 
-
 function retrieveRecords() {
     global $mysqli;
 
-    $sql = "SELECT users.email, CONCAT (resident_information.firstName, ' ', resident_information.lastName) AS fullName,crime_information.dateTimeOfReport,
-            crime_information.dateTimeOfIncident, crime_information.placeOfIncident, crime_information.suspectName, crime_information.status
-            FROM crime_information
-            JOIN users ON crime_information.crime_id = users.id
-            JOIN resident_information ON crime_information.crime_id = resident_information.resident_id
-            WHERE crime_information.crime_id;";    
+    $sql = "SELECT u.email, c.CrimeType
+            FROM users AS u
+            INNER JOIN crime_category AS c ON (u.id = c.categoryID)";     
 
     $result = $mysqli->query($sql);
+
     $records = array(); // Initialize an array to store all records
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $records[] = array(
                 "email" => $row["email"],
-                "fullName" => $row["fullName"],
-                "dateTimeOfReport" => $row["dateTimeOfReport"],
-                "dateTimeOfIncident" => $row["dateTimeOfIncident"],
-                "placeOfIncident" => $row["placeOfIncident"],
-                "suspectName" => $row["suspectName"],
-                "status" => $row["status"]
+                "crimeType" => $row["CrimeType"]
             );
         }
     } else {
         // Handle the case where no records are found
-        // You can leave $records as an empty array in this case        
+        // You can leave $records as an empty array in this case
+
+        
     }
 
     return $records;
 }
+
+// function retrieveRecords() {
+//     global $mysqli;
+
+//     $sql = "SELECT users.email, CONCAT (resident_information.firstName, ' ', resident_information.lastName) AS fullName,crime_information.dateTimeOfReport,
+//             crime_information.dateTimeOfIncident, crime_information.placeOfIncident, crime_information.suspectName, crime_information.status
+//             FROM crime_information
+//             JOIN users ON crime_information.crime_id = users.id
+//             JOIN resident_information ON crime_information.crime_id = resident_information.resident_id
+//             WHERE crime_information.crime_id;";    
+
+//     $result = $mysqli->query($sql);
+//     $records = array(); // Initialize an array to store all records
+
+//     if ($result->num_rows > 0) {
+//         while ($row = $result->fetch_assoc()) {
+//             $records[] = array(
+//                 "email" => $row["email"],
+//                 "fullName" => $row["fullName"],
+//                 "dateTimeOfReport" => $row["dateTimeOfReport"],
+//                 "dateTimeOfIncident" => $row["dateTimeOfIncident"],
+//                 "placeOfIncident" => $row["placeOfIncident"],
+//                 "suspectName" => $row["suspectName"],
+//                 "status" => $row["status"]
+//             );
+//         }
+//     } else {
+//         // Handle the case where no records are found
+//         // You can leave $records as an empty array in this case        
+//     }
+
+//     return $records;
+// }
 
 
 function getUserById($userId)
@@ -66,65 +93,89 @@ function getAllCrimeInfo()
 
     return $residents;
 }
+function handleFileUpload($inputName, $uploadDir)
+{
+    // Check if files were uploaded successfully
+    if (!empty($_FILES[$inputName]['name'])) {
+        $fileName = $_FILES[$inputName]['name'];
+
+        // Ensure the target directory exists
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $filePath = $uploadDir . $fileName;
+
+        // Move the uploaded file to the specified directory
+        move_uploaded_file($_FILES[$inputName]['tmp_name'], $filePath);
+
+        // Replace backslashes with forward slashes in the file path
+        $filePath = str_replace('\\', '/', $filePath);
+
+        return $filePath;
+    }
+
+    return null;
+}
 
 
 
-// function addCrimeReport($firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email)
-// {
-//     global $mysqli;
+function addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
+{
+    global $mysqli;
 
-//     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE firstName = ? AND lastName = ?");
-//     $stmt->bind_param("ss", $firstName, $lastName);
-//     $stmt->execute();
-//     $stmt->bind_result($count);
-//     $stmt->fetch();
-//     $stmt->close();
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE email = ? AND suspectName = ?");
+    $stmt->bind_param("ss", $email, $suspectName);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
 
-//     if ($count > 0) {
-//         return "Resident with this name already exists.";
-//     }
+    if ($count > 0) {
+        return "Crime Information with this email already exists.";
+    }
 
-//     $stmt = $mysqli->prepare("INSERT INTO resident_information (firstName, lastName, dateOfBirth, address, phoneNumber, email) VALUES (?, ?, ?, ?, ?, ?)");
-//     $stmt->bind_param("ssssss", $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email);
-//     $result = $stmt->execute();
-//     $stmt->close();
+    $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+    $stmt->bind_param("ssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
+    $result = $stmt->execute();
+    $stmt->close();
 
-//     if ($result) {
-//         return "Resident added successfully.";
-//     } else {
-//         return "Failed to add resident.";
-//     }
-// }
+    if ($result) {
+        return "Crime Information added successfully.";
+    } else {
+        return "Failed to Crime Information resident.";
+    }
+}
 
-// function updateResident($resident_id, $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email)
-// {
-//     global $mysqli;
+function updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
+{
+    global $mysqli;
 
-//     $sql = "UPDATE resident_information SET firstName=?, lastName=?, dateOfBirth=?, address=?, phoneNumber=?, email=?
-//             WHERE resident_id=?";
-//     $stmt = $mysqli->prepare($sql);
-//     $stmt->bind_param("ssssssi", $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email, $resident_id);
-//     $result = $stmt->execute();
+    $sql = "UPDATE crime_information SET email=?, formFileValidID=?, dateTimeOfReport=?, dateTimeOfIncident=?, placeOfIncident=?, suspectName=?, statement=?, formFileEvidence=?, CrimeType=?, status=?
+            WHERE crime_id=?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("ssssssssssi", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status, $crime_id);
+    $result = $stmt->execute();
 
-//     return $result;
-// }
+    return $result;
+}
 
-// function deleteResident($resident_id)
-// {
-//     global $mysqli;
+function deleteCrimeInfo($crime_id)
+{
+    global $mysqli;
 
-//     $sql = "DELETE FROM resident_information WHERE resident_id=?";
-//     $stmt = $mysqli->prepare($sql);
-//     $stmt->bind_param("i", $resident_id);
-//     $result = $stmt->execute();
+    $sql = "DELETE FROM crime_information WHERE crime_id=?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("i", $crime_id);
+    $result = $stmt->execute();
 
-//     if ($result) {
-//         $sql = "ALTER TABLE resident_information AUTO_INCREMENT = 1";
-//         $mysqli->query($sql);
-//     }
+    if ($result) {
+        $sql = "ALTER TABLE crime_information AUTO_INCREMENT = 1";
+        $mysqli->query($sql);
+    }
 
-//     return $result;
-// }
+    return $result;
+}
 
 function getCrimeInfoWithLimitAndOffset($limit, $offset)
 {

@@ -126,7 +126,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="../plugins/line-awesome-free/css/line-awesome.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="../dist/css/adminlte.min.css">
-      <link rel="stylesheet" href="../dist/css/dashboard.css">
+  <link rel="stylesheet" href="../dist/css/dashboard.css">
+  <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -147,7 +148,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4 " style="background-color:#0B2436;">
       <!-- Brand Logo -->
-      <a href="index3.html" class="brand-link">
+      <a href="../admin/dashboard.php" class="brand-link">
         <img src="../dist/img/PNP.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
           style="opacity: .8">
         <span class="brand-text font-weight-light">San Luis Police Station</span>
