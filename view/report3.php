@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 // Include database connection and functions files
 require_once '../config/db.php';
 require_once '../includes/report3_functions.php';
+require_once '../api/phpqrcode/qrlib.php';
 
 // Get the user ID from the session
 $user_id = $_SESSION['user_id'];
@@ -128,16 +129,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <a class="nav-link" href="view_reports.php">My Reports List</a>
                             </li>
                             <li class="nav-item dropdown">
-                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                     <?php echo $user['username']; ?>
-                                     </a>
-                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                         <a class="dropdown-item" href="auth/user_profile.php">My Profile</a>
-                                         <div class="dropdown-divider"></div>
-                                         <a class="dropdown-item" href="index.php?logout=true">Log Out</a>
-                                     </div>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <?php echo $user['username']; ?>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="auth/user_profile.php">My Profile</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="index.php?logout=true">Log Out</a>
+                                </div>
                             </li>
-
                     <?php else: ?>
                         <li class="nav-item">
                             <a class="nav-link" href="auth/login.php">Login</a>
@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="QR Code">QR Codes: </label>
                                     </div>
                                     <div class="form-group">
-                                        <img src="<?php echo $qrCodePath; ?>" alt="QR Code Generated">
+                                        <img src="#" alt="QR Code Generated">
                                     </div>
                                 </div> -->
 
