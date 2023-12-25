@@ -1,0 +1,17 @@
+.logo {
+    width: 100px;
+    height: 100px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    text-align: center;
+}
+
+.modal-title {
+    margin: 0; /* Remove default margin for the modal title */
+    font-size: 1.5rem; /* Adjust font size as needed */
+}

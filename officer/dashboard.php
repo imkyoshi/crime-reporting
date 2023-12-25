@@ -18,6 +18,8 @@ $users = getAllUsers();
 
 $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
+$totalResidents = getTotalResidentCount();
+$totalCrimeinfo = getTotalCrimeInfoCount();
 ?>
 
 <!DOCTYPE html>
@@ -142,38 +144,12 @@ $currentUserInfo = getUserById($currentUserID);
             <div class="content">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-navy">
-                                <div class="inner">
-                                    <h3>9</h3>
-                                    <p>Total User</p>
-                                </div>
-                                <div class="icon" id="icon">
-                                    <i class="las la-user-friends"></i>
-                                </div>
-                            </div>
-                        </div>
                         <!-- ./col -->
-                        <div class="col-lg-3 col-6">
+                        <div class="col-lg-6 col-6">
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
-                                    <h3>6</h3>
-                                    <p>Crime Category</p>
-                                </div>
-                                <div class="icon" id="icon">
-                                    <i class="las la-layer-group"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ./col -->
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-navy">
-                                <div class="inner">
-                                    <h3>0</h3>
-
+                                    <h3><?php echo $totalCrimeinfo; ?></h3>
                                     <p>Crime Info</p>
                                 </div>
                                 <div class="icon" id="icon">
@@ -182,12 +158,11 @@ $currentUserInfo = getUserById($currentUserID);
                             </div>
                         </div>
                         <!-- ./col -->
-                        <div class="col-lg-3 col-6">
+                        <div class="col-lg-6 col-6">
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
-                                    <h3>0</h3>
-
+                                    <h3><?php echo $totalResidents; ?></h3>
                                     <p>Resident Info</p>
                                 </div>
                                 <div class="icon" id="icon">

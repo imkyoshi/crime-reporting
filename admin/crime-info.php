@@ -119,7 +119,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../plugins/line-awesome-free/css/line-awesome.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="../dist/css/dashboard.css">
+    <link rel="stylesheet" href="../dist/css/viewprint.css">
     <!-- Mapquest CDN -->
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
@@ -665,96 +665,61 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     </div>
                                                 </div>
                                                 <!-- View Crime Information Modal -->
-                                                <div class="modal fade"
-                                                    id="viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"
-                                                    tabindex="-1" role="dialog"
-                                                    aria-labelledby="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-lg"
-                                                        role="document">
+                                                <div class="modal fade" id="viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>" tabindex="-1" role="dialog" aria-labelledby="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title"
-                                                                    id="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>">
+                                                                <img src="../dist/img/sanluislogo.png" alt="Left Logo" class="logo">
+                                                                <h5 class="modal-title" id="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>">
                                                                     View Crime Information
                                                                 </h5>
-                                                                <button type="button" class="close" data-dismiss="modal"
-                                                                    aria-label="Close">
+                                                                <img src="../dist/img/pnp.png" alt="QR Code" class="logo">
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            <div class="modal-body" id="viewprint">
-                                                                <form method="POST" action=""
-                                                                    enctype="multipart/form-data">
-                                                                    <input type="hidden" name="crime_id"
-                                                                        value="<?php echo $crimeinfo['crime_id']; ?>">
-                                                                    <div class="row">
-                                                                        <div class="col-md-6">
-                                                                            <div class="form-group">
-                                                                                <label for="editEmail">Email: <?php echo $crimeinfo['email']; ?></label>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label for="formFileValidID"
-                                                                                    class="form-label">Upload Valid
-                                                                                    ID:</label>
-                                                                                <div class="label-wrapper">
-                                                                                    <input class="form-control"
-                                                                                        type="file" id="formFileValidID"
-                                                                                        name="formFileValidID" multiple
-                                                                                        onchange="previewValidID()">
-                                                                                </div>
-                                                                                <div id="ValidIDPreviews"
-                                                                                    style="margin-top: 10px;"></div>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label for="editDateTimeOfReport">Date
-                                                                                    and Time of Report:</label>
-                                                                                <input type="datetime-local"
-                                                                                    class="form-control"
-                                                                                    id="editDateTimeOfReport"
-                                                                                    name="dateTimeOfReport"
-                                                                                    value="<?php echo $crimeinfo['dateTimeOfReport']; ?>"
-                                                                                    required="">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-6">
-                                                                            <div class="form-group">
-                                                                                <label for="editDateTimeOfIncident">Date
-                                                                                    and Time of Incident:</label>
-                                                                                <input type="datetime-local"
-                                                                                    class="form-control"
-                                                                                    id="editDateTimeOfIncident"
-                                                                                    name="dateTimeOfIncident"
-                                                                                    value="<?php echo $crimeinfo['dateTimeOfIncident']; ?>"
-                                                                                    required="">
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label for="placeOfIncident"
-                                                                                    class="form-label">Place of
-                                                                                    Incident:</label>
-                                                                                <input type="search" id="search-input"
-                                                                                    name="placeOfIncident"
-                                                                                    value="<?php echo $crimeinfo['placeOfIncident']; ?>"
-                                                                                    class="form-control" />
-                                                                            </div>
-                                                                            <!-- Add more right column content here -->
-                                                                        </div>
-                                                                    </div>
-                                                                    <!-- Continue adding form elements as needed -->
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary"
-                                                                            data-dismiss="modal">Close</button>
-                                                                        <button type="button" class="btn btn-success"
-                                                                            onClick="printDiv('viewprint')"
-                                                                            data-dismiss="modal">
-                                                                            <i class="las la-print"></i> Print
-                                                                        </button>
-                                                                    </div>
-                                                                </form>
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label>Email:</label>
+                                                                    <p><?php echo $crimeinfo['email']; ?></p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Date and Time of Report:</label>
+                                                                    <p><?php echo $crimeinfo['dateTimeOfReport']; ?></p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Date and Time of Incident:</label>
+                                                                    <p><?php echo $crimeinfo['dateTimeOfIncident']; ?></p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Place of Incident:</label>
+                                                                    <p><?php echo $crimeinfo['placeOfIncident']; ?></p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Suspect Name:</label>
+                                                                    <p><?php echo $crimeinfo['suspectName']; ?></p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Type of Crime:</label>
+                                                                    <p><?php echo $crimeinfo['CrimeType']; ?></p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Statement:</label>
+                                                                    <textarea class="form-control" rows="6" readonly><?php echo $crimeinfo['statement']; ?></textarea>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Status:</label>
+                                                                    <p><?php echo $crimeinfo['status']; ?></p>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                    <button type="button" class="btn btn-primary" onclick="printModalContent()">Print</button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
 
                                                 <!-- Delete User Modal -->
                                                 <div class="modal fade"

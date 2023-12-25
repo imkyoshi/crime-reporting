@@ -1,23 +1,41 @@
 <?php
-session_start();
+require_once '../config/db.php';
 
-// Check if the user is not logged in
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../auth/login.php");
-    exit;
+function getCrimeInfoById($mysqli, $crimeId)
+{
+    $stmt = $mysqli->prepare("SELECT * FROM crime_information WHERE crime_id = ?");
+    $stmt->bind_param("i", $crimeId);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $crimeinfo = $result->fetch_assoc();
+    } else {
+        // Handle the case where no record is found
+        // You may want to set default values or display an error message
+        $crimeinfo = array(
+            'email' => '',
+            'placeOfIncident' => '',
+            'status' => '',
+            'dateTimeOfReport' => '',
+            'dateTimeOfIncident' => '',
+            'CrimeType' => ''
+            // Add other fields as needed
+        );
+    }
+
+    $stmt->close();
+
+    return $crimeinfo;
 }
 
-// Include database connection and functions files
-require_once '../config/db.php';
-require_once '../includes/report3_functions.php';
+// Usage example:
+$crimeId = 1; // Replace with the actual crime ID you want to retrieve
+$crimeinfo = getCrimeInfoById($mysqli, $crimeId);
 
-// Get the user ID from the session
-$user_id = $_SESSION['user_id'];
-// Retrieve user information from the database
-$user = getUserById($user_id);
-$records = retrieveRecords();
+// ... (The rest of your code)
 ?>
-
 
 <html lang="en">
 
@@ -208,7 +226,7 @@ $records = retrieveRecords();
 
 <body>
     <div class="header">
-        <img src="/dist/img/sanluislogo.png" alt="Left Logo" class="logo">
+        <img src="../dist/img/sanluislogo.png" alt="Left Logo" class="logo">
         <div class="center-content">
             <h4>San Luis Municipal Police Station</h4>
             <h5>Poblacion, San Luis, 4210, PH</h5>
@@ -216,22 +234,22 @@ $records = retrieveRecords();
             <h4>sanluismpsbatangas@yahoo.com</h4><br><br>
             <h4>CRIME REPORT</h4>
         </div>
-        <img src="/dist/img/pnp.png" alt="QR Code" class="logo">
+        <img src="../dist/img/pnp.png" alt="QR Code" class="logo">
     </div>
 
     <div class="container">
         <div class="main-column">
-            <label for="email">Email: <strong>lowelljaybrosoto1998@gmail.com</strong></label>
+            <label for="email">Email: <strong><?php echo $crimeinfo['email']; ?></strong></label>
 
-            <label for="course">Place Of Incident: <strong>Poblacion, San Luis, 4210, PH</strong></label>
+            <label for="course">Place Of Incident: <strong><?php echo $crimeinfo['placeOfIncident']; ?></strong></label>
             <label for="major">Suspect Name: <strong>Earl</strong></label>
-            <label>Status: <strong>Pending</strong></label>
+            <label>Status: <strong><?php echo $crimeinfo['status']; ?></strong></label>
         </div>
         <div class="side-column">
-            <label for="reference-number">Date and Time Of Report: <strong>2023-12-08 11:26:00</strong></label>
+            <label for="reference-number">Date and Time Of Report: <strong><?php echo $crimeinfo['dateTimeOfReport']; ?></strong></label>
 
-            <label for="year-level">Date and Time Of Incident: <strong>2023-12-08 11:26:00</strong></label>
-            <label for="year-level">Type Of Crime: <strong>Illegal Gambling</strong></label>
+            <label for="year-level">Date and Time Of Incident: <strong><?php echo $crimeinfo['dateTimeOfIncident']; ?></strong></label>
+            <label for="year-level">Type Of Crime: <strong> <?php echo $crimeinfo['CrimeType']; ?></strong></label>
         </div>
     </div>
     <br>
@@ -239,12 +257,8 @@ $records = retrieveRecords();
     <div class="container">
         <div class="main-column">
             <div class="marg">
-                <textarea name="statement" id=""  rows="20" style="width: 100%; text-align:justify;" disabled>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                    and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic 
-                    typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
-                    Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                <textarea name="statement" id=""  rows="20" style="width: 100%; text-align:justify;" >
+                <?php echo $crimeinfo['statement']; ?>
                 </textarea>
             </div>
 
