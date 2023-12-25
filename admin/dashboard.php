@@ -22,6 +22,16 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
 
 $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
+
+// Call the function to get the data for the bar chart
+$crimeData = getMonthlyCrimeCounts();
+$barChartData = array(
+    'data' => $crimeData['data'],
+    'months' => $crimeData['months'],
+    'years' => $crimeData['years']
+);
+// Call the function to get the data for the donut chart
+$donutChartData = getDonutChartData();
 ?>
 
 <!DOCTYPE html>
@@ -228,13 +238,12 @@ $currentUserInfo = getUserById($currentUserID);
                                 </div>
                                 <div class="card-body">
                                     <div class="chart">
-                                        <canvas id="areaChart"
+                                        <canvas id="barChart"
                                             style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
                             </div>
-
                         </div>
 
                         <!-- DONUT CHART-->
@@ -250,7 +259,7 @@ $currentUserInfo = getUserById($currentUserID);
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="donutChart"
+                                    <canvas id="donutChart" 
                                         style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                                 </div>
                                 <!-- /.card-body -->
@@ -312,18 +321,31 @@ $currentUserInfo = getUserById($currentUserID);
     <!-- REQUIRED SCRIPTS -->
 
     <!-- jQuery -->
-    <script src="../plugins/jquery/jquery.min.js"></script>
+    <script>
+        window.onload = function () {
+            var barChartData = <?php echo json_encode($barChartData); ?>;
+            var donutChartData = <?php echo json_encode($donutChartData); ?>;
+
+            // Ensure data is available before rendering
+            if (barChartData && donutChartData) {
+                renderBarChart(barChartData);
+                renderDonutChart(donutChartData);
+            }
+        };
+    </script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../dist/js/adminlte.min.js"></script>
     <script src="../dist/js/style.js"></script>
     <!-- ChartJS -->
-    <script src="../plugins/chart.js/Chart.min.js"></script>
-    <script src="../dist/js/barchart.js"></script>
-    <script src="../dist/js/areachart.js"></script>
-    <script src="../dist/js/charts.js"></script>
-    <script src="../dist/js/inspect.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- <script src="../dist/js/barchart.js"></script> -->
+    <script src="../dist/js/areachart.js?v=123"></script>
+    <script src="../dist/js/charts.js?v=123"></script>
+    <!-- <script src="../dist/js/inspect.js"></script> -->
 </body>
 
 </html>

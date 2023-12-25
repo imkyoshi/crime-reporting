@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.navbar .getstarted {
+    background: #106eea;
+    margin-left: 30px;
+    border-radius: 4px;
+    font-weight: 400;
+    color: #fff;
+    text-decoration: none;
+    padding: .5rem 1rem;
+    line-height: 2.3;
+}
+
+/* can you make hover of ul li undeline bottom  */
+
+.navbar-nav a {
+    font-size: 15px;
+    text-transform: uppercase;
+    font-weight: 500;
+    position: relative;
+}
+
+.navbar-nav a:hover::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: #000;
+    /* Change the color to your preference */
+    bottom: 0;
+    left: 0;
+}
+
+.navbar-light .navbar-brand {
+    color: #000;
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.navbar-light .navbar-brand:focus,
+.navbar-light .navbar-brand:hover {
+    color: #000;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #000;
+}
+
+.navbar-light .navbar-nav .nav-link:focus,
+.navbar-light .navbar-nav .nav-link:hover {
+    color: #000;
+}
+
+.w-100 {
+    height: 100vh;
+}
+
+.navbar-toggler {
+    padding: 1px 5px;
+    font-size: 18px;
+    line-height: 0.3;
+    background: #fff;
+}
+
+body::before {
+    display: block;
+    content: '';
+    height: 60px;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+
+.close {
+    position: absolute;
+    top: 10px;
+    margin-top: 65px;
+    padding-right: 400px;
+    right: 15px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 40px;
+    z-index: 1;
+    /* Adjusted z-index value */
+}
+
+.preview-media {
+    max-width: 50px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.preview-media:hover {
+    transform: scale(1.5);
+    transition: transform 0.3s ease-in-out;
+}
+
+
+#login {
+    background: url("../../dist/img/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: auto;
+}
+
+.card {
+    /* card center */
+    opacity: 86%;
+    margin-top: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#card-header {
+    
+}
+
+
+
+.card-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+}
+
+.register-link {
+    text-align: center;
+    font-size: 14px;
+    color: #757575;
+}
+
+.register-link a {
+    color: #4285F4;
+}
+
+.logo img {
+    width: 45px;
+    height: 45px;
+    margin-right: 10px;
+
+}
+
+.logo1 {
+    width: 90px;
+    height: 90px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+/* services */
+
+#services .card {
+    text-align: center;
+    margin: 18px 10px 40px;
+    transition: transform 0.2s ease-in;
+}
+
+#services .card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#services .card:hover {
+    transform: translateY(-15px);
+}
+
+.register-link {
+    text-align: center;
+    font-size: 14px;
+}
+
+.register-link a {
+    color: #4285F4;
+}
+
+
+@media (min-width: 768px) {
+    .news-input {
+        width: 50%;
+    }
+}
+
+
+@media (max-width: 360px) {
+    #brand {
+        font-size: 14px;
+    }
+
+    .logo img {
+        width: 33px;
+        height: 33px;
+    }
+}
+
+@media (max-width: 376px) {
+    #brand {
+        font-size: 15px;
+    }
+
+    .logo img {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 391px) {
+    #brand {
+        font-size: 15px;
+    }
+
+    .logo img {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 415px) {
+    #brand {
+        font-size: 16px;
+    }
+
+    .logo img {
+        width: 37px;
+        height: 37px;
+    }
+}

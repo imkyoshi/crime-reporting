@@ -88,7 +88,7 @@ $currentUserInfo = getUserById($currentUserID);
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="crime-info.php" class="nav-link">
+                            <a href="../officer/crime-info.php" class="nav-link">
                                 <i class="las la-gavel" id="icon"></i>
                                 <p>
                                     Crime Information

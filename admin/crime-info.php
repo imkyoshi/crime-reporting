@@ -296,7 +296,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="addCrimeInfoModalLabel">Add New Crime Information</h5>
+                                                        <h5 class="modal-title" id="addCrimeInfoModalLabel">Add New
+                                                            Crime Information</h5>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
@@ -310,35 +311,46 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                     placeholder="Enter email" name="email">
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="formFileValidID" class="form-label">Upload Valid ID:</label>
+                                                                <label for="formFileValidID" class="form-label">Upload
+                                                                    Valid ID:</label>
                                                                 <div class="label-wrapper">
-                                                                <input class="form-control" type="file" id="formFileValidID"
-                                                                    name="formFileValidID" multiple onchange="previewValidID()">
+                                                                    <input class="form-control" type="file"
+                                                                        id="formFileValidID" name="formFileValidID"
+                                                                        multiple onchange="previewValidID()">
                                                                 </div>
-                                                                <div id="ValidIDPreviews" style="margin-top: 10px;"></div>
+                                                                <div id="ValidIDPreviews" style="margin-top: 10px;">
+                                                                </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="dateTimeOfReport">Date and Time of Report:</label>
-                                                                <input type="datetime-local" class="form-control" id="dateTimeOfReport"
-                                                                name="dateTimeOfReport" required="">
+                                                                <label for="dateTimeOfReport">Date and Time of
+                                                                    Report:</label>
+                                                                <input type="datetime-local" class="form-control"
+                                                                    id="dateTimeOfReport" name="dateTimeOfReport"
+                                                                    required="">
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="dateTimeOfIncident">Date and Time of Incident:</label>
-                                                                <input type="datetime-local" class="form-control" id="dateTimeOfIncident"
-                                                                name="dateTimeOfIncident" required="">
+                                                                <label for="dateTimeOfIncident">Date and Time of
+                                                                    Incident:</label>
+                                                                <input type="datetime-local" class="form-control"
+                                                                    id="dateTimeOfIncident" name="dateTimeOfIncident"
+                                                                    required="">
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="placeOfIncident" class="form-label">Place of Incident:</label>
-                                                                <input type="search" id="search-input" name="placeOfIncident" class="form-control"/>
+                                                                <label for="placeOfIncident" class="form-label">Place of
+                                                                    Incident:</label>
+                                                                <input type="search" id="search-input"
+                                                                    name="placeOfIncident" class="form-control" />
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="suspectName">Suspect Name</label>
-                                                                <input type="text" class="form-control" id="suspectName" name="suspectName" required>
+                                                                <input type="text" class="form-control" id="suspectName"
+                                                                    name="suspectName" required>
                                                             </div>
-                                                            <div class="form-group">    
+                                                            <div class="form-group">
                                                                 <label for="typeOfCrime">Type of Crime</label>
-                                                                <select class="form-control" id="crimetype" name="crimetype">
-                                                                <?php
+                                                                <select class="form-control" id="crimetype"
+                                                                    name="crimetype">
+                                                                    <?php
                                                                 $records = retrieveRecords();
 
                                                                 if (empty($records)) {
@@ -349,26 +361,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                     }
                                                                 }
                                                                 ?>
-                                                                </select>                   
+                                                                </select>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="statement">Statement:</label>
-                                                                <textarea class="form-control form-control-md" id="exampleTextarea" 
-                                                                name="statement" rows="6" placeholder="Enter your statement here"></textarea>
+                                                                <textarea class="form-control form-control-md"
+                                                                    id="exampleTextarea" name="statement" rows="6"
+                                                                    placeholder="Enter your statement here"></textarea>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="formFileEvidence" class="form-label">Upload Evidence:</label>
+                                                                <label for="formFileEvidence" class="form-label">Upload
+                                                                    Evidence:</label>
                                                                 <div class="label-wrapper">
-                                                                <input class="form-control" type="file" id="formFileEvidence"
-                                                                name="formFileEvidence" multiple onchange="previewEvidence()">
+                                                                    <input class="form-control" type="file"
+                                                                        id="formFileEvidence" name="formFileEvidence"
+                                                                        multiple onchange="previewEvidence()">
                                                                 </div>
-                                                                <div id="EvidencePreviews" style="margin-top: 10px;"></div>
+                                                                <div id="EvidencePreviews" style="margin-top: 10px;">
+                                                                </div>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="status">Status</label>
                                                                 <select class="form-control" id="status" name="status">
                                                                     <option value="Pending">Pending</option>
-                                                                    <option value="UnderInvestigation">Under Investigation</option>
+                                                                    <option value="UnderInvestigation">Under
+                                                                        Investigation</option>
                                                                     <option value="Confirmed">Confirmed</option>
                                                                 </select>
                                                             </div>
@@ -451,6 +468,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     <td>
                                                         <?php echo $crimeinfo['email']; ?>
                                                     </td>
+                                                    <!-- <td>
+                                                            <?php echo $crimeinfo['formFileValidID']; ?>
+                                                        </td> -->
                                                     <td>
                                                         <?php echo $crimeinfo['dateTimeOfReport']; ?>
                                                     </td>
@@ -469,6 +489,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     <td>
                                                         <?php echo $crimeinfo['statement']; ?>
                                                     </td>
+                                                    <!-- <td>
+                                                            <?php echo $crimeinfo['formFileEvidence']; ?>
+                                                        </td> -->
                                                     <td>
                                                         <?php echo $crimeinfo['status']; ?>
                                                     </td>
@@ -478,6 +501,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                             data-target="#editCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"><i
                                                                 class="las la-edit"></i>
                                                             Update</button>
+                                                        <button type="button" class="btn btn-warning btn-sm"
+                                                            data-toggle="modal"
+                                                            data-target="#viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"><i
+                                                                class="las la-eye"></i>
+                                                            View</button>
                                                         <button type="button" class="btn btn-danger btn-sm"
                                                             data-toggle="modal"
                                                             data-target="#deleteCrimeInfo<?php echo $crimeinfo['crime_id']; ?>"><i
@@ -485,115 +513,249 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                             Delete</button>
                                                     </td>
                                                 </tr>
-                                                <!-- Edit User Modal -->
+                                                <!-- Edit Crime Information Modal -->
                                                 <div class="modal fade"
                                                     id="editCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"
                                                     tabindex="-1" role="dialog"
                                                     aria-labelledby="editCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>"
                                                     aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg"
+                                                        role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title"
                                                                     id="editCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>">
-                                                                    Edit User</h5>
+                                                                    Update Crime Information</h5>
                                                                 <button type="button" class="close" data-dismiss="modal"
                                                                     aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                        <form method="POST" action="" enctype="multipart/form-data">
-                                                        <input type="hidden" name="crime_id"
-                                                                          value="<?php echo $crimeinfo['crime_id']; ?>">
-                                                            <div class="form-group">
-                                                                <label for="editEmail">Email</label>
-                                                                <input type="email" class="form-control"
-                                                                    id="editEmail" name="email"
-                                                                    value="<?php echo $crimeinfo['email']; ?>"
-                                                                    required>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="formFileValidID" class="form-label">Upload Valid ID:</label>
-                                                                <div class="label-wrapper">
-                                                                <input class="form-control" type="file" id="formFileValidID"
-                                                                    name="formFileValidID" multiple onchange="previewValidID()">
-                                                                </div>
-                                                                <div id="ValidIDPreviews" style="margin-top: 10px;"></div>
-                                                            </div>
-                                                                <div id="ValidIDPreviews" style="margin-top: 10px;"></div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="editDateTimeOfReport">Date and Time of Report:</label>
-                                                                <input type="datetime-local" class="form-control" id="editDateTimeOfReport"
-                                                                name="dateTimeOfReport" value="<?php echo $crimeinfo['dateTimeOfReport']; ?>" required="">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="editDateTimeOfIncident">Date and Time of Incident:</label>
-                                                                <input type="datetime-local" class="form-control" id="editDateTimeOfIncident"
-                                                                name="dateTimeOfIncident" value="<?php echo $crimeinfo['dateTimeOfIncident']; ?>" required="">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="placeOfIncident" class="form-label">Place of Incident:</label>
-                                                                <input type="search" id="search-input" name="placeOfIncident" value="<?php echo $crimeinfo['placeOfIncident']; ?>" class="form-control"/>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="editSuspectName">Suspect Name</label>
-                                                                <input type="text" class="form-control" id="editSuspectName" name="suspectName" value="<?php echo $crimeinfo['suspectName']; ?>" required>
-                                                            </div>
-                                                            <div class="form-group">    
-                                                                <label for="typeOfCrime">Type of Crime</label>
-                                                                <select class="form-control" id="crimetype" name="crimetype">
-                                                                <?php
-                                                                $records = retrieveRecords();
+                                                                <form method="POST" action=""
+                                                                    enctype="multipart/form-data">
+                                                                    <input type="hidden" name="crime_id"
+                                                                        value="<?php echo $crimeinfo['crime_id']; ?>">
+                                                                    <div class="form-group">
+                                                                        <label for="editEmail">Email</label>
+                                                                        <input type="email" class="form-control"
+                                                                            id="editEmail" name="email"
+                                                                            value="<?php echo $crimeinfo['email']; ?>"
+                                                                            required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="formFileValidID"
+                                                                            class="form-label">Upload Valid ID:</label>
+                                                                        <div class="label-wrapper">
+                                                                            <input class="form-control" type="file"
+                                                                                id="formFileValidID"
+                                                                                name="formFileValidID" multiple
+                                                                                onchange="previewValidID()">
+                                                                        </div>
+                                                                        <div id="ValidIDPreviews"
+                                                                            style="margin-top: 10px;">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="ValidIDPreviews" style="margin-top: 10px;">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="editDateTimeOfReport">Date and Time
+                                                                            of
+                                                                            Report:</label>
+                                                                        <input type="datetime-local"
+                                                                            class="form-control"
+                                                                            id="editDateTimeOfReport"
+                                                                            name="dateTimeOfReport"
+                                                                            value="<?php echo $crimeinfo['dateTimeOfReport']; ?>"
+                                                                            required="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="editDateTimeOfIncident">Date and
+                                                                            Time of
+                                                                            Incident:</label>
+                                                                        <input type="datetime-local"
+                                                                            class="form-control"
+                                                                            id="editDateTimeOfIncident"
+                                                                            name="dateTimeOfIncident"
+                                                                            value="<?php echo $crimeinfo['dateTimeOfIncident']; ?>"
+                                                                            required="">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="placeOfIncident"
+                                                                            class="form-label">Place of
+                                                                            Incident:</label>
+                                                                        <input type="search" id="search-input"
+                                                                            name="placeOfIncident"
+                                                                            value="<?php echo $crimeinfo['placeOfIncident']; ?>"
+                                                                            class="form-control" />
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="editSuspectName">Suspect
+                                                                            Name</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="editSuspectName" name="suspectName"
+                                                                            value="<?php echo $crimeinfo['suspectName']; ?>"
+                                                                            required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="typeOfCrime">Type of Crime</label>
+                                                                        <select class="form-control" id="crimetype"
+                                                                            name="crimetype">
+                                                                            <?php
+                                                                            $records = retrieveRecords();
 
-                                                                if (empty($records)) {
-                                                                    echo '<option value="" disabled>No crime types found</option>';
-                                                                } else {
-                                                                    foreach ($records as $record) {
-                                                                        echo '<option value="' . $record['crimeType'] . '">' . $record['crimeType'] . '</option>';
-                                                                    }
-                                                                }
-                                                                ?>
-                                                                </select>                   
+                                                                            if (empty($records)) {
+                                                                                echo '<option value="" disabled>No crime types found</option>';
+                                                                            } else {
+                                                                                foreach ($records as $record) {
+                                                                                    echo '<option value="' . $record['crimeType'] . '">' . $record['crimeType'] . '</option>';
+                                                                                }
+                                                                            }
+                                                                            ?>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="statement">Statement:</label>
+                                                                        <textarea class="form-control form-control-md"
+                                                                            id="exampleTextarea" name="statement"
+                                                                            rows="6"><?php echo $crimeinfo['statement']; ?></textarea>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="formFileEvidence"
+                                                                            class="form-label">Upload
+                                                                            Evidence:</label>
+                                                                        <div class="label-wrapper">
+                                                                            <input class="form-control" type="file"
+                                                                                id="formFileEvidence"
+                                                                                name="formFileEvidence" multiple
+                                                                                onchange="previewEvidence()">
+                                                                        </div>
+                                                                        <div id="EvidencePreviews"
+                                                                            style="margin-top: 10px;">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="status">Status</label>
+                                                                        <select class="form-control" id="status"
+                                                                            name="status">
+                                                                            <option value="Pending" <?php echo
+                                                                                ($crimeinfo['status']==='Pending' )
+                                                                                ? 'selected' : '' ; ?>
+                                                                                >Pending</option>
+                                                                            <option value="UnderInvestigation" <?php
+                                                                                echo
+                                                                                ($crimeinfo['status']==='UnderInvestigation'
+                                                                                ) ? 'selected' : '' ; ?>
+                                                                                >Under Investigation</option>
+                                                                            <option value="Confirmed" <?php echo
+                                                                                ($crimeinfo['status']==='Confirmed' )
+                                                                                ? 'selected' : '' ; ?>
+                                                                                >Confirmed</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">Close</button>
+                                                                        <button type="submit" class="btn btn-primary"
+                                                                            name="updateCrimeInfo">Save</button>
+                                                                    </div>
+                                                                </form>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label for="statement">Statement:</label>
-                                                                <textarea class="form-control form-control-md" id="exampleTextarea" name="statement" rows="6"><?php echo $crimeinfo['statement']; ?></textarea>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="formFileEvidence" class="form-label">Upload Evidence:</label>
-                                                                <div class="label-wrapper">
-                                                                <input class="form-control" type="file" id="formFileEvidence"
-                                                                name="formFileEvidence" multiple onchange="previewEvidence()">
-                                                                </div>
-                                                                <div id="EvidencePreviews" style="margin-top: 10px;"></div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="status">Status</label>
-                                                                <select class="form-control" id="status" name="status">
-                                                                    <option value="Pending" <?php echo ($crimeinfo['status'] === 'Pending') ? 'selected' : '';
-                                                                    ?>
-                                                                        >Pending</option>
-                                                                    <option value="UnderInvestigation" <?php echo ($crimeinfo['status'] === 'UnderInvestigation') ? 'selected' : '';
-                                                                    ?>
-                                                                        >Under Investigation</option>
-                                                                    <option value="Confirmed" <?php echo ($crimeinfo['status'] === 'Confirmed') ? 'selected' : '';
-                                                                    ?>
-                                                                        >Confirmed</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary"
-                                                                    name="updateCrimeInfo">Save</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- View Crime Information Modal -->
+                                                <div class="modal fade"
+                                                    id="viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"
+                                                    tabindex="-1" role="dialog"
+                                                    aria-labelledby="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg"
+                                                        role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"
+                                                                    id="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>">
+                                                                    View Crime Information
+                                                                </h5>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body" id="viewprint">
+                                                                <form method="POST" action=""
+                                                                    enctype="multipart/form-data">
+                                                                    <input type="hidden" name="crime_id"
+                                                                        value="<?php echo $crimeinfo['crime_id']; ?>">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="editEmail">Email: <?php echo $crimeinfo['email']; ?></label>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="formFileValidID"
+                                                                                    class="form-label">Upload Valid
+                                                                                    ID:</label>
+                                                                                <div class="label-wrapper">
+                                                                                    <input class="form-control"
+                                                                                        type="file" id="formFileValidID"
+                                                                                        name="formFileValidID" multiple
+                                                                                        onchange="previewValidID()">
+                                                                                </div>
+                                                                                <div id="ValidIDPreviews"
+                                                                                    style="margin-top: 10px;"></div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="editDateTimeOfReport">Date
+                                                                                    and Time of Report:</label>
+                                                                                <input type="datetime-local"
+                                                                                    class="form-control"
+                                                                                    id="editDateTimeOfReport"
+                                                                                    name="dateTimeOfReport"
+                                                                                    value="<?php echo $crimeinfo['dateTimeOfReport']; ?>"
+                                                                                    required="">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="editDateTimeOfIncident">Date
+                                                                                    and Time of Incident:</label>
+                                                                                <input type="datetime-local"
+                                                                                    class="form-control"
+                                                                                    id="editDateTimeOfIncident"
+                                                                                    name="dateTimeOfIncident"
+                                                                                    value="<?php echo $crimeinfo['dateTimeOfIncident']; ?>"
+                                                                                    required="">
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="placeOfIncident"
+                                                                                    class="form-label">Place of
+                                                                                    Incident:</label>
+                                                                                <input type="search" id="search-input"
+                                                                                    name="placeOfIncident"
+                                                                                    value="<?php echo $crimeinfo['placeOfIncident']; ?>"
+                                                                                    class="form-control" />
+                                                                            </div>
+                                                                            <!-- Add more right column content here -->
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- Continue adding form elements as needed -->
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">Close</button>
+                                                                        <button type="button" class="btn btn-success"
+                                                                            onClick="printDiv('viewprint')"
+                                                                            data-dismiss="modal">
+                                                                            <i class="las la-print"></i> Print
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <!-- Delete User Modal -->
                                                 <div class="modal fade"
                                                     id="deleteCrimeInfo<?php echo $crimeinfo['crime_id']; ?>"
@@ -690,6 +852,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../dist/js/inspect.js"></script>
     <script src="../api/mapquest/mapquest.js"></script>
     <script src="../dist/js/imagePreview.js"></script>
+    <script src="../dist/js/viewprint.js"></script>
     <!-- Map Quest -->
     <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
     <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>

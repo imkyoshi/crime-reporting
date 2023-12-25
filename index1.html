@@ -9,15 +9,14 @@ if (!isset($_SESSION['user_id'])) {
 
 // Include database connection and functions files
 require_once '../config/db.php';
-
 require_once '../includes/functions.php';
-require_once '../includes/report1_functions.php';
+require_once '../api/QRcode/gr1.php';
+require_once '../includes/report2_functions.php';
 
 // Get the user ID from the session
 $user_id = $_SESSION['user_id'];
 // Retrieve user information from the database
 $user = getUserById($user_id);
-
 $data = retrieveRecords();
 // Handle logout request
 if (isset($_GET['logout'])) {
@@ -35,28 +34,28 @@ if (isset($_GET['logout'])) {
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve form data
-    $email = $_POST['email'];
-    $formFileValidID  = handleFileUpload('formFileValidID', __DIR__.'../dist/uploads/valid_ids/');
+    $fullName = $_POST['fullName'];
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
-    $placeOfIncident = $_POST['placeOfIncident']; 
-    $suspectName = $_POST['suspectName'];
-    $crimetype = $_POST['crimetype'];
-    $statement = $_POST['statement'];
-    $formFileEvidence = handleFileUpload('formFileEvidence', __DIR__. '../dist/uploads/evidences/');
+    $placeOfIncident = $_POST['address'];
+    $suspectName = $_POST['suspect'];
+    $crimeType = $_POST['crimetype'];
+    $statement = $_POST['exampleTextarea'];
+    $validIDFilePath = handleFileUpload('formFileValidID', '../uploads/valid_ids/');
+    $evidenceFilePath = handleFileUpload('formFileEvidence', '../uploads/evidence/');
 
     // Insert data into the database
-    $result = insertCrimeInformation($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype);
+    $crimeID = insertCrimeInformation($dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $validIDFilePath, $evidenceFilePath, $crimeType, $user_id);
 
+    // Generate QR code
+    $qrCodePath = generateQRCode($crimeID, '../uploads/qrcodes/');
 
-    if ($result === "Resident added successfully.") {
+    // Update the crime information record with the QR code path
+    updateCrimeQRCodePath($crimeID, $qrCodePath);
+
+    // Redirect to the reports list page
     header("Location: ../view/view_reports.php");
-        exit;
-    } elseif ($result === "Resident with this name already exists.") {
-        $addErrorMessage = "Resident already exists.";
-    } else {
-        $addErrorMessage = "Failed to add resident.";
-    }
+    exit;
 }
 ?>
 
@@ -69,14 +68,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="dist/img/favicon.ico">
     <!-- Bootstrap CDN -->
-    <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
+     <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <!-- Mapquest CDN -->
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../dist/css/report.css" />
-
+    
     <title>SanLuis Municipality Police Station</title>
 </head>
 
@@ -102,9 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <li class="nav-item">
                         <a class="nav-link" href="../index.php#about">About Us</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.php#services">Services</a>
-                    </li>
+                                          <li class="nav-item">
+                            <a class="nav-link" href="../index.php#services">Services</a>
+                        </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -114,21 +113,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <li><a class="dropdown-item" href="https://pnpclearance.ph/">NBI Clearance</a></li>
                             <li><a class="dropdown-item" href="https://feo.pnp.gov.ph/">Firearms Licensing</a></li>
                             <li><a class="dropdown-item" href="https://prod10.ebpls.com/sanluisbatangas/index.php">
-                                    Business Permits</a>
+                            Business Permits</a>
                             </li>
                         </ul>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../view/view_reports.php">My Reports List</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.php?logout=true">Logout</a>
-                    </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../view/view_reports.php">My Reports List</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../index.php?logout=true">Logout</a>
+                            </li>
                     <?php else: ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../auth/login.php">Login</a>
-                    </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../auth/login.php">Login</a>
+                            </li>
                     <?php endif; ?>
                 </ul>
             </div>
@@ -147,24 +146,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <h4 class="text-center">Report Crime</h4>
                                 </div>
                                 <h5 class="text-start mt-4"><u>Guidelines</u></h5>
-                                <p class="text-justify mt-2">Reporters must present a valid ID for user identity
-                                    verification to ensure the authenticity of crime reports and prevent the submission
-                                    of illegal or false information</p>
+                                <p class="text-justify mt-2">Reporters must present a valid ID for user identity verification to ensure the authenticity of crime reports and prevent the submission of illegal or false information</p>
                                 <div class="col-md-12">
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="email">Email:</label>
-                                            <input type="text" class="form-control" id="email" name="email"
-                                                value="<?php echo $user['email']; ?>" readonly>
-                                        </div>
+                                    
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="fullname">Full Name:</label>
+                                        <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter your fullname" value="<?php echo $data['fullName']; ?>" readonly>
                                     </div>
+                                </div>
 
                                     <div class="form-group">
                                         <label for="formFileValidID" class="form-label">Upload Valid ID:</label>
                                         <div class="label-wrapper">
-                                            <input class="form-control" type="file" id="formFileValidID"
-                                                name="formFileValidID" multiple onchange="previewValidID()">
+                                            <input class="form-control" type="file" id="formFileValidID" multiple
+                                                onchange="previewValidID()">
                                         </div>
                                         <div id="ValidIDPreviews" style="margin-top: 10px;"></div>
                                     </div>
@@ -194,8 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="col-md-9">
                                     <div class="form-group">
                                         <label for="placeOfIncident" class="form-label">Place of Incident:</label>
-                                        <input type="text" class="form-control" id="placeOfIncident"
-                                            name="placeOfIncident" readonly>
+                                        <input type="text" class="form-control" id="address" name="address" readonly>
                                     </div>
                                 </div>
 
@@ -205,57 +200,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <input type="hidden" name="lat" id="lat">
                                         <input type="hidden" name="lng" id="lng">
                                         -->
-                                        <button type="button" id="pickLocationBtn" class="btn btn-primary mt-4">Pick a
-                                            Location</button>
+                                     <button type="button" id="pickLocationBtn" class="btn btn-primary mt-4">Pick a Location</button>
                                     </div>
                                 </div>
 
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="placeOfIncident">Suspect Name:</label>
-                                        <input type="text" class="form-control" id="suspectName" name="suspectName"
-                                            required>
+                                        <input type="text" class="form-control" id="suspect" name="suspect" required>
                                     </div>
                                 </div>
-
+                                
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="typeOfCrime">Type of Crime:</label>
                                         <select class="form-control" id="crimetype" name="crimetype">
-                                            <option value="<?php echo $data['crimeType']; ?>" selected>
-                                                <?php echo $data['crimeType']; ?>
-                                            </option>
+                                            <option value="<?php echo $data['crimeType']; ?>" selected><?php echo $data['crimeType']; ?></option>
                                             <!-- Add other options if needed -->
                                         </select>
                                     </div>
                                 </div>
-
+                                                            
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="statement">Statement:</label>
-                                        <textarea class="form-control form-control-md" id="exampleTextarea"
-                                            name="statement" rows="6"
+                                        <textarea class="form-control form-control-md" id="exampleTextarea" rows="6"
                                             placeholder="Enter your statement here"></textarea>
                                     </div>
                                 </div>
 
-
                                 <!-- <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="QR Code">QR Codes: </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <img src="<?php echo $qrCodePath; ?>" alt="QR Code Generated">
+                                    </div>
+                                </div> -->
+
+                                <div class="col-md-12">
                                        <div class="form-group">
-                                        <label for="qrcode">QR Codes: </label>
+                                        <label for="QR Code">QR Codes: </label>
                                        </div>
                                        <div class="form-group">
-                                        <?php echo '<img src="'.$imageData.'" class="" name="qrcode" alt="" style="width:150px;">'; ?>
-                                        <button type="button" class="btn btn-primary" id="qrBtn" name="qrBtn">Generate QR Code</button>
+                                        <?php echo '<img src="'.$imageData.'" class="" alt="" style="width:150px;">'; ?>
                                        </div>
-                                   </div> -->
+                                   </div>
 
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="formFileEvidence" class="form-label">Upload Evidence:</label>
                                         <div class="label-wrapper">
-                                            <input class="form-control" type="file" id="formFileEvidence"
-                                                name="formFileEvidence" multiple onchange="previewEvidence()">
+                                            <input class="form-control" type="file" id="formFileEvidence" multiple
+                                                onchange="previewEvidence()">
                                         </div>
                                         <div id="EvidencePreviews" style="margin-top: 10px;"></div>
                                     </div>
@@ -265,24 +262,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div id="modalMedia" class="modal-content"></div>
                                 </div>
 
-                                <form method="POST" action="../view/report.php">
-                                    <!-- ... (existing code) ... -->
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="las la-map-marker"></i>Report
-                                    </button>
-                                </form>
-
+                        <button type="button" class="btn btn-primary">
+                            <i class="las la-map-marker"></i>Report
+                        </button>
 
                         </form>
                     </div>
                 </div>
             </div>
-
+            
         </div>
     </div>
 
-    <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
+        <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -325,3 +317,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="../dist/js/imagePreview.js"></script>
     <script src="../api/mapquest/mapquest.js"></script>
     <!-- <script src="../dist/js/inspect.js"></script> -->
+</body>
+
+</html>

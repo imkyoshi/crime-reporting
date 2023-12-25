@@ -2,7 +2,57 @@
 // Include database connections
 require_once 'db.php';
 
+// Function to fetch data for the donut chart
+function getMonthlyCrimeCounts() {
+    global $mysqli;
 
+    $sql = "SELECT DATE_FORMAT(`dateTimeOfReport`, '%Y-%m') AS `month_year`, COUNT(*) AS `count`
+            FROM `crime_information`
+            GROUP BY `month_year`";
+
+    $result = $mysqli->query($sql);
+
+    $data = array();
+    $months = array();
+    $years = array(); // Add this line
+
+    while ($row = $result->fetch_assoc()) {
+        $monthYear = $row['month_year'];
+        $count = $row['count'];
+
+        // Extract year from month_year
+        $year = date('Y', strtotime($monthYear));
+
+        $months[] = $monthYear;
+        $data[] = $count;
+        
+        // Add year to the years array
+        if (!in_array($year, $years)) {
+            $years[] = $year;
+        }
+    }
+
+    return array('data' => $data, 'months' => $months, 'years' => $years);
+}
+
+
+
+
+// Function to fetch data for the donut chart
+function getDonutChartData() {
+    global $mysqli;
+
+    $sql = "SELECT CrimeType, COUNT(*) as count FROM crime_information GROUP BY CrimeType";
+    $result = $mysqli->query($sql);
+
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        $data['labels'][] = $row['CrimeType'];
+        $data['data'][] = $row['count'];
+    }
+
+    return $data; // Return the array directly without json_encode
+}
 
 // Function to authenticate user
 function authenticateUser($username, $password)
