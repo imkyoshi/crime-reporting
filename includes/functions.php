@@ -37,7 +37,6 @@ function getMonthlyCrimeCounts() {
 
 
 
-
 // Function to fetch data for the donut chart
 function getDonutChartData() {
     global $mysqli;

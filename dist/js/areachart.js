@@ -15,7 +15,7 @@ function renderBarChart(data) {
             {
                 label: 'Crime Reports',
                 data: data.data,
-                backgroundColor: '#f56954', // Set to the desired color
+                backgroundColor: '#00c0ef', // Set to the desired color
             }
         ]
     };
