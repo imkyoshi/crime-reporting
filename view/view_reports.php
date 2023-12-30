@@ -113,12 +113,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                         </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?php echo $user['username']; ?></a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                            <a class="dropdown-item" href="../auth/user_profile.php">My Profile</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="../index.php?logout=true">Log Out</a>
-                                    </div>
+                                    <?php echo $user['username']; ?>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <!-- <a class="dropdown-item" href="../auth/user_profile.php">My Profile</a> -->
+                                    <!-- <div class="dropdown-divider"></div> -->
+                                    <a class="dropdown-item" href="../index.php?logout=true">Log Out</a>
+                                </div>
                             </li>
                     <?php else: ?>
                         <li class="nav-item">
@@ -188,6 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                             <table class="table" id="residentTable">
                                 <thead>
                                     <tr>
+                                        <th>QR Codes</th>
                                         <th>Date and Time of Report</th>
                                         <th>Date and Time of Incident</th>
                                         <th>Place of Incident</th>
@@ -199,6 +201,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                 <tbody>
                                     <?php foreach ($crimeinfos as $crimeinfo): ?>
                                         <tr>
+                                            <td>
+                                                <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="60" height="60">
+                                            </td>
                                             <td>
                                                 <?php echo $crimeinfo['dateTimeOfReport']; ?>
                                             </td>

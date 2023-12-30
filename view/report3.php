@@ -13,10 +13,18 @@ require_once '../includes/report3_functions.php';
 require_once '../api/phpqrcode/qrlib.php';
 
 // Get the user ID from the session
-$user_id = $_SESSION['user_id'];
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+// Validate user ID
+if (!$user_id || !is_numeric($user_id)) {
+    header("Location: ../auth/login.php");
+    exit;
+}
+
 // Retrieve user information from the database
 $user = getUserById($user_id);
 $records = retrieveRecords();
+
 // Handle logout request
 if (isset($_GET['logout'])) {
     // Unset all session variables
@@ -32,20 +40,22 @@ if (isset($_GET['logout'])) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve form data
-    $email = $_POST['email'];
+    // Sanitize and validate form data
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $dateTimeOfReport = $_POST['dateTimeOfReport'];
+    $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
+    $placeOfIncident = htmlspecialchars($_POST['placeOfIncident']);
+    $suspectName = htmlspecialchars($_POST['suspectName']);
+    $crimetype = htmlspecialchars($_POST['crimetype']);
+    $statement = htmlspecialchars($_POST['statement']);
+
+    // Handle file uploads
     $formFileValidID = handleFileUpload('formFileValidID',
         __DIR__ . DIRECTORY_SEPARATOR . ".."
         . DIRECTORY_SEPARATOR . 'dist'
         . DIRECTORY_SEPARATOR . 'uploads'
         . DIRECTORY_SEPARATOR . 'valid_ids'
         . DIRECTORY_SEPARATOR);
-    $dateTimeOfReport = $_POST['dateTimeOfReport'];
-    $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
-    $placeOfIncident = $_POST['placeOfIncident'];
-    $suspectName = $_POST['suspectName'];
-    $crimetype = $_POST['crimetype'];
-    $statement = $_POST['statement'];
     $formFileEvidence = handleFileUpload('formFileEvidence',
         __DIR__ . DIRECTORY_SEPARATOR . ".."
         . DIRECTORY_SEPARATOR . 'dist'
@@ -105,6 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Bootstrap CDN -->
     <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <!-- Mapquest CDN -->
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
@@ -154,16 +166,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li class="nav-item">
-                                <a class="nav-link" href="view_reports.php">My Reports List</a>
+                                <a class="nav-link" href="../view/view_reports.php">My Reports List</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <?php echo $user['username']; ?>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="auth/user_profile.php">My Profile</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="index.php?logout=true">Log Out</a>
+                                    <!-- <a class="dropdown-item" href="auth/user_profile.php">My Profile</a> -->
+                                    <!-- <div class="dropdown-divider"></div> -->
+                                    <a class="dropdown-item" href="../index.php?logout=true">Log Out</a>
                                 </div>
                             </li>
                     <?php else: ?>
@@ -373,13 +385,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="#"><i class="bi bi-instagram text-light mx-1"></i></a>
         </div>
     </footer>
-    <!-- Bootstrap -->
-    <script src="../dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Map Quest -->
     <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
     <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
+    <!-- Bootstrap -->
+    <script src="../dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@2.10.2/dist/umd/popper.min.js"></script>
     <!-- Costumize -->
     <script src="../dist/js/imagePreview.js"></script>
     <script src="../dist/js/reportSuccessmessage.js"></script>
