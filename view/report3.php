@@ -34,36 +34,64 @@ if (isset($_GET['logout'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve form data
     $email = $_POST['email'];
-    $formFileValidID  = handleFileUpload('formFileValidID',
-    __DIR__ . DIRECTORY_SEPARATOR . 'dist' 
-    . DIRECTORY_SEPARATOR . 'uploads' 
-    . DIRECTORY_SEPARATOR . 'valid_ids' 
-    . DIRECTORY_SEPARATOR);
+    $formFileValidID = handleFileUpload('formFileValidID',
+        __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . 'dist'
+        . DIRECTORY_SEPARATOR . 'uploads'
+        . DIRECTORY_SEPARATOR . 'valid_ids'
+        . DIRECTORY_SEPARATOR);
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
-    $placeOfIncident = $_POST['placeOfIncident']; 
+    $placeOfIncident = $_POST['placeOfIncident'];
     $suspectName = $_POST['suspectName'];
     $crimetype = $_POST['crimetype'];
     $statement = $_POST['statement'];
-    $formFileEvidence = handleFileUpload('formFileEvidence', 
-                    __DIR__ . DIRECTORY_SEPARATOR . 'dist' 
-                    . DIRECTORY_SEPARATOR . 'uploads' 
-                    . DIRECTORY_SEPARATOR . 'evidences' 
-                    . DIRECTORY_SEPARATOR);
+    $formFileEvidence = handleFileUpload('formFileEvidence',
+        __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . 'dist'
+        . DIRECTORY_SEPARATOR . 'uploads'
+        . DIRECTORY_SEPARATOR . 'evidences'
+        . DIRECTORY_SEPARATOR);
+
+    // Generate QR code data
+    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
+    $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
+    $qrCodeData .= "Place: " . $placeOfIncident . "\n";
+    $qrCodeData .= "Suspect: " . $suspectName . "\n";
+    $qrCodeData .= "Crime Type: " . $crimetype . "\n";
+    $qrCodeData .= "Statement: " . $statement . "\n";
+
+    // Generate QR code image and save it
+    $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . "dist"
+        . DIRECTORY_SEPARATOR . "qrcodes"
+        . DIRECTORY_SEPARATOR;
+    // Create the qrcodes directory if it doesn't exist
+    if (!is_dir($qrCodePath)) {
+        mkdir($qrCodePath, 0777, true);
+    }
+
+    $qrCodeFileName = uniqid() . "_" . time() . ".png";
+    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Insert data into the database
-    $result = insertCrimeInformation($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype);
+    $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName);
 
-    
-    if ($result === "Resident added successfully.") {
-        header("Location: ../view/view_reports.php");
-            exit;
-        } elseif ($result === "Resident with this name already exists.") {
-            $addErrorMessage = "Resident already exists.";
-        } else {
-            $addErrorMessage = "Failed to add resident.";
-        }
+    $result = $stmt->execute();
+    $stmt->close();
+
+    if (strpos($result, "Crime Information submit successfully") !== false) {
+        $reportSuccessMessage = 'Crime information updated successfully.';
+    } elseif (strpos($result, "Crime Information with this name already exists.") !== false) {
+        $addErrorMessage = "Crime Information with this name already exists.";
+    } else {
+        $addErrorMessage = "Failed to submit Crime Information.";
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -254,20 +282,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="statement">Statement:</label>
-                                        <textarea class="form-control form-control-md" id="exampleTextarea"
+                                        <textarea class="form-control form-control-md" id="statement"
                                             name="statement" rows="6"
                                             placeholder="Enter your statement here"></textarea>
                                     </div>
                                 </div>
 
-                                <!-- <div class="col-md-12">
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="QR Code">QR Codes: </label>
+                                        <?php if (isset($qrCodeFileName) && file_exists($qrCodeFullPath)): ?>
+                                            <img src="../dist/qrcodes/<?php echo htmlspecialchars(basename($qrCodeFullPath)); ?>" name="QR" id="QR" alt="QR Code Generated">
+                                        <?php else: ?>
+                                            <p>No QR code available</p>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="form-group">
-                                        <img src="#" alt="QR Code Generated">
-                                    </div>
-                                </div> -->
+                                </div>
 
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -284,13 +313,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div id="modalMedia" class="modal-content"></div>
                                 </div>
 
-                                <form method="POST" action="../view/report3.php">
+                                <!-- <form method="POST" action="../view/report3.php"> -->
                                     <!-- ... (existing code) ... -->
 
                                     <button type="submit" class="btn btn-primary">
                                         <i class="las la-map-marker"></i>Report
                                     </button>
-                                </form>
+                                <!-- </form> -->
 
 
                         </form>
@@ -323,6 +352,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     </div>
 
+     <!-- Bootstrap toast container -->
+     <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+        <div class="toast-header">
+            <strong class="mr-auto">Success</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body" id="successToastBody"></div>
+    </div>
+
     <footer class="p-5 bg-dark text-white text-center position-relative">
         <div class="container">
             <p class="lead">Copyright &copy; 2023 San Luis Municipality Police Station</p>
@@ -342,7 +382,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
     <!-- Costumize -->
     <script src="../dist/js/imagePreview.js"></script>
+    <script src="../dist/js/reportSuccessmessage.js"></script>
     <script src="../api/mapquest/mapquest.js"></script>
+    <script src="../dist/js/generateQR.js"></script>
     <!-- <script src="../dist/js/inspect.js"></script> -->
 </body>
 

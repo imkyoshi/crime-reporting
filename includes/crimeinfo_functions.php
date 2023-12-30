@@ -1,6 +1,6 @@
 <?php
 require_once '../config/db.php';
-
+require_once '../api/phpqrcode/qrlib.php';
 
 function retrieveRecords() {
     global $mysqli;
@@ -109,10 +109,8 @@ function handleFileUpload($inputName, $uploadDir)
         // Move the uploaded file to the specified directory
         move_uploaded_file($_FILES[$inputName]['tmp_name'], $filePath);
 
-        // Replace backslashes with forward slashes in the file path
-        $filePath = str_replace('\\', '/', $filePath);
-
-        return $filePath;
+        // Return only the file name without the path
+        return $fileName;
     }
 
     return null;
@@ -135,8 +133,31 @@ function addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIn
         return "Crime Information with this email already exists.";
     }
 
-    $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
-    $stmt->bind_param("ssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
+    // Generate QR code data
+    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
+    $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
+    $qrCodeData .= "Place: " . $placeOfIncident . "\n";
+    $qrCodeData .= "Suspect: " . $suspectName . "\n";
+    $qrCodeData .= "Crime Type: " . $crimetype . "\n";
+    $qrCodeData .= "Statement: " . $statement . "\n";
+
+    // Generate QR code image and save it
+    $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+    . DIRECTORY_SEPARATOR . "dist" 
+    . DIRECTORY_SEPARATOR . "qrcodes" 
+    . DIRECTORY_SEPARATOR;
+    // Create the qrcodes directory if it doesn't exist
+    if (!is_dir($qrCodePath)) {
+        mkdir($qrCodePath, 0777, true);
+    }
+
+    $qrCodeFileName = uniqid() . "_" . time() . ".png";
+    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    QRcode::png($qrCodeData, $qrCodeFullPath);
+
+    $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode=?, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+    $stmt->bind_param("sssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status);
     $result = $stmt->execute();
     $stmt->close();
 
@@ -151,14 +172,49 @@ function updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport,
 {
     global $mysqli;
 
-    $sql = "UPDATE crime_information SET email=?, formFileValidID=?, dateTimeOfReport=?, dateTimeOfIncident=?, placeOfIncident=?, suspectName=?, statement=?, formFileEvidence=?, CrimeType=?, status=?
+    // Generate QR code data
+    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
+    $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
+    $qrCodeData .= "Place: " . $placeOfIncident . "\n";
+    $qrCodeData .= "Suspect: " . $suspectName . "\n";
+    $qrCodeData .= "Crime Type: " . $crimetype . "\n";
+    $qrCodeData .= "Statement: " . $statement . "\n";
+
+    // Generate QR code image and save it
+    $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . "dist"
+        . DIRECTORY_SEPARATOR . "qrcodes"
+        . DIRECTORY_SEPARATOR;
+    // Create the qrcodes directory if it doesn't exist
+    if (!is_dir($qrCodePath)) {
+        mkdir($qrCodePath, 0777, true);
+    }
+
+    $qrCodeFileName = uniqid() . "_" . time() . ".png";
+    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    QRcode::png($qrCodeData, $qrCodeFullPath);
+
+    // Update data in the database
+    $sql = "UPDATE crime_information SET email=?, formFileValidID=?, dateTimeOfReport=?, dateTimeOfIncident=?, placeOfIncident=?, suspectName=?, statement=?, formFileEvidence=?, CrimeType=?, qrcode=?, status=?
             WHERE crime_id=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ssssssssssi", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status, $crime_id);
+    $stmt->bind_param("ssssssssssi", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status, $crime_id);
     $result = $stmt->execute();
 
     return $result;
 }
+
+function updateQRCodeFilename($crime_id, $qrCodeFileName) {
+    global $mysqli;
+
+    $stmt = $mysqli->prepare("UPDATE crime_information SET qrcode = ? WHERE crime_id = ?");
+    $stmt->bind_param("si", $qrCodeFileName, $crime_id);
+    $stmt->execute();
+    $stmt->close();
+}
+
+
 
 function deleteCrimeInfo($crime_id)
 {

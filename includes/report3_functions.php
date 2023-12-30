@@ -48,49 +48,79 @@
         // Check if files were uploaded successfully
         if (!empty($_FILES[$inputName]['name'])) {
             $fileName = $_FILES[$inputName]['name'];
+    
+            // Ensure the target directory exists
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+    
             $filePath = $uploadDir . $fileName;
-
-        // Ensure the target directory exists
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-        $filePath = $uploadDir . $fileName;
-
+    
             // Move the uploaded file to the specified directory
             move_uploaded_file($_FILES[$inputName]['tmp_name'], $filePath);
-
-            return $filePath;
+    
+            // Return only the file name without the path
+            return $fileName;
         }
-
+    
         return null;
     }
+    
+    
 
-    function insertCrimeInformation($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype)
-    {
-        global $mysqli;
-    
-        $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE suspectName = ? AND statement = ?");
-        $stmt->bind_param("ss", $suspectName, $statement);
-        $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
-        $stmt->close();
-    
-        if ($count > 0) {
-            return "Crime Information with this suspect name already exists.";
-        }
-    
-        $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype);
-    
-        $result = $stmt->execute();
-        $stmt->close();
-    
-        if ($result) {
-            return "Crime Information added successfully";
-        } else {
-            return "Failed to add Crime Information";
-        }
+// report3_functions.php
+function insertCrimeInformation($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrcode)
+{
+    global $mysqli;
+
+    // Check if crime information with the same suspect name and statement already exists
+    $stmtCheck = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE suspectName = ? AND statement = ?");
+    $stmtCheck->bind_param("ss", $suspectName, $statement);
+    $stmtCheck->execute();
+    $stmtCheck->bind_result($count);
+    $stmtCheck->fetch();
+    $stmtCheck->close();
+
+    if ($count > 0) {
+        return "Crime Information with this suspect name and statement already exists.";
     }
+
+    // Generate QR code data
+    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
+    $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
+    $qrCodeData .= "Place: " . $placeOfIncident . "\n";
+    $qrCodeData .= "Suspect: " . $suspectName . "\n";
+    $qrCodeData .= "Crime Type: " . $crimetype . "\n";
+    $qrCodeData .= "Statement: " . $statement . "\n";
+
+    // Generate QR code image and save it
+    $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+    . DIRECTORY_SEPARATOR . "dist" 
+    . DIRECTORY_SEPARATOR . "qrcodes" 
+    . DIRECTORY_SEPARATOR;
+    // Create the qrcodes directory if it doesn't exist
+    if (!is_dir($qrCodePath)) {
+        mkdir($qrCodePath, 0777, true);
+    }
+
+    $qrCodeFileName = uniqid() . "_" . time() . ".png";
+    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    QRcode::png($qrCodeData, $qrCodeFullPath);
+
+    // Insert data into the database
+    $stmtInsert = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmtInsert->bind_param("ssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName);
+
+    $result = $stmtInsert->execute();
+    $stmtInsert->close();
+
+    if ($result) {
+        return "Crime Information submitted successfully";
+    } else {
+        return "Failed to submit Crime Information";
+    }
+}
+
     
     ?>

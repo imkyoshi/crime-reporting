@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['roles'] !== 'admin') {
 // Include database connection and functions files
 require_once '../config/db.php';
 require_once '../includes/crimeinfo_functions.php';
+require_once '../api/phpqrcode/qrlib.php';
 
 $crimeinfo = getAllCrimeInfo();
 $currentUserID = $_SESSION['user_id'];
@@ -62,9 +63,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     $formFileValidID = handleFileUpload('formFileValidID', '../dist/uploads/valid_id/');
     $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidence/');
 
+    // Generate QR code data
+    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
+    $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
+    $qrCodeData .= "Place: " . $placeOfIncident . "\n";
+    $qrCodeData .= "Suspect: " . $suspectName . "\n";
+    $qrCodeData .= "Crime Type: " . $crimetype . "\n";
+    $qrCodeData .= "Statement: " . $statement . "\n";
+
+    // Generate QR code image and save it
+    $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . "dist"
+        . DIRECTORY_SEPARATOR . "qrcodes"
+        . DIRECTORY_SEPARATOR;
+    // Create the qrcodes directory if it doesn't exist
+    if (!is_dir($qrCodePath)) {
+        mkdir($qrCodePath, 0777, true);
+    }
+
+    $qrCodeFileName = uniqid() . "_" . time() . ".png";
+    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    QRcode::png($qrCodeData, $qrCodeFullPath);
+
+    // Update crime information
     $result = updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
 
     if ($result) {
+        // Update QR code filename in the database
+        updateQRCodeFilename($crime_id, $qrCodeFileName);
         $updateSuccessMessage = 'Crime information updated successfully.';
     } else {
         $errorMessage = 'Failed to update crime information.';
@@ -72,16 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
 }
 
 
+
 // Handle form submission for deleting a Crime Information
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCrimeInfo'])) {
-  $crime_id = $_POST['crime_id'];
+    $crime_id = $_POST['crime_id'];
 
-  $result = deleteCrimeInfo($crime_id);
-  if ($result) {
-    $deleteSuccessMessage = 'Crime Information deleted successfully.';
-  } else {
-    $errorMessage = 'Failed to delete Resident.';
-  }
+    $result = deleteCrimeInfo($crime_id);
+    if ($result) {
+        $deleteSuccessMessage = 'Crime Information deleted successfully.';
+    } else {
+        $errorMessage = 'Failed to delete Resident.';
+    }
 }
 
 $limit = isset($_GET['showRecords']) ? intval($_GET['showRecords']) : 5;
@@ -449,6 +477,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         <table class="table">
                                             <thead>
                                                 <tr>
+                                                    <th>QR Codes</th>
                                                     <th>email</th>
                                                     <!-- <th>Upload Valid ID</th> -->
                                                     <th>Date and Time of Report</th>
@@ -465,6 +494,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <tbody>
                                                 <?php foreach ($crimeinfos as $crimeinfo): ?>
                                                 <tr>
+                                                    <td>
+                                                        <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="70" height="70">
+                                                    </td>
                                                     <td>
                                                         <?php echo $crimeinfo['email']; ?>
                                                     </td>
@@ -551,9 +583,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                                 id="formFileValidID"
                                                                                 name="formFileValidID" multiple
                                                                                 onchange="previewValidID()">
+                                                                                
                                                                         </div>
-                                                                        <div id="ValidIDPreviews"
-                                                                            style="margin-top: 10px;">
+                                                                        <div id="ValidIDPreviews" style="margin-top: 10px;">
+                                                                            <?php if (!empty($crimeinfo['formFileValidID'])): ?>
+                                                                                <img src="<?php echo '../dist/uploads/valid_ids/' . $crimeinfo['formFileValidID']; ?>" alt="Valid ID" width="150" height="150">
+                                                                            <?php endif; ?>
+                                                                        </div>
+                                                                        <div id="mediaModal" class="modal">
+                                                                            <span class="close" onclick="closeMediaModal()">&times;</span>
+                                                                            <div id="modalMedia" class="modal-content"></div>
                                                                         </div>
                                                                     </div>
                                                                     <div id="ValidIDPreviews" style="margin-top: 10px;">
@@ -620,6 +659,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                             id="exampleTextarea" name="statement"
                                                                             rows="6"><?php echo $crimeinfo['statement']; ?></textarea>
                                                                     </div>
+                                                                    <!-- Display QR Code in Edit Crime Information Modal -->
+                                                                    <div class="form-group">
+                                                                        <label for="qrCode">QR Code:</label><br>
+                                                                        <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="150" height="150">
+                                                                    </div>
                                                                     <div class="form-group">
                                                                         <label for="formFileEvidence"
                                                                             class="form-label">Upload
@@ -630,8 +674,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                                 name="formFileEvidence" multiple
                                                                                 onchange="previewEvidence()">
                                                                         </div>
-                                                                        <div id="EvidencePreviews"
-                                                                            style="margin-top: 10px;">
+                                                                        <div id="EvidencePreviews" style="margin-top: 10px;">
+                                                                            <?php if (!empty($crimeinfo['formFileEvidence'])): ?>
+                                                                                <img src="<?php echo '../dist/uploads/evidences/' . $crimeinfo['formFileEvidence']; ?>" alt="Evidences" width="150" height="150">
+                                                                            <?php endif; ?>
+                                                                        </div>
+                                                                        <div id="mediaModal" class="modal">
+                                                                            <span class="close" onclick="closeMediaModal()">&times;</span>
+                                                                            <div id="modalMedia" class="modal-content"></div>
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group">
@@ -708,8 +758,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                     <textarea class="form-control" rows="6" readonly><?php echo $crimeinfo['statement']; ?></textarea>
                                                                 </div>
                                                                 <div class="form-group">
+                                                                    <label>Valid ID:</label><br>
+                                                                    <img src="<?php echo '../dist/uploads/valid_ids/' . $crimeinfo['formFileValidID']; ?>" alt="QR Code" width="120" height="120">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>Evidences:</label><br>
+                                                                    <img src="<?php echo '../dist/uploads/evidences/' . $crimeinfo['formFileEvidence']; ?>" alt="QR Code" width="120" height="120">
+                                                                </div>
+                                                                <div class="form-group">
                                                                     <label>Status:</label>
                                                                     <p><?php echo $crimeinfo['status']; ?></p>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label>QR Code:</label><br>
+                                                                    <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="120" height="120">
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -814,7 +876,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../dist/js/adminlte.min.js"></script>
     <script src="../dist/js/sucessmessage.js"></script>
     <script src="../dist/js/style.js"></script>
-    <script src="../dist/js/inspect.js"></script>
+    <!-- <script src="../dist/js/inspect.js"></script> -->
     <script src="../api/mapquest/mapquest.js"></script>
     <script src="../dist/js/imagePreview.js"></script>
     <script src="../dist/js/viewprint.js"></script>
