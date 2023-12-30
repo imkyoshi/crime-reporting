@@ -118,6 +118,7 @@ function handleFileUpload($inputName, $uploadDir)
 
 
 
+
 function addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
 {
     global $mysqli;
@@ -179,7 +180,8 @@ function updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport,
     $qrCodeData .= "Place: " . $placeOfIncident . "\n";
     $qrCodeData .= "Suspect: " . $suspectName . "\n";
     $qrCodeData .= "Crime Type: " . $crimetype . "\n";
-    $qrCodeData .= "Statement: " . $statement . "\n";
+    $qrCodeData .= "status: " . $status . "\n";
+    
 
     // Generate QR code image and save it
     $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
@@ -199,7 +201,7 @@ function updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport,
     $sql = "UPDATE crime_information SET email=?, formFileValidID=?, dateTimeOfReport=?, dateTimeOfIncident=?, placeOfIncident=?, suspectName=?, statement=?, formFileEvidence=?, CrimeType=?, qrcode=?, status=?
             WHERE crime_id=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ssssssssssi", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status, $crime_id);
+    $stmt->bind_param("sssssssssssi", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status, $crime_id);
     $result = $stmt->execute();
 
     return $result;

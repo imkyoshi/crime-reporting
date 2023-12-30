@@ -3,9 +3,9 @@
 session_start();
 
 // Check if the user is not logged in or not an admin
-if (!isset($_SESSION['user_id']) || $_SESSION['roles'] !== 'admin') {
-  header("Location: ../auth/login.php");
-  exit;
+if (!isset($_SESSION['user_id']) || $_SESSION['roles'] !== 'officer') {
+    header("Location: ../auth/login.php");
+    exit;
 }
 
 // Include database connection and functions files
@@ -22,15 +22,17 @@ $records = retrieveRecords();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
     // Retrieve form data
     $email = $_POST['email'];
-    $formFileValidID  = handleFileUpload('formFileValidID', __DIR__ . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'valid_ids' . DIRECTORY_SEPARATOR);
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
     $placeOfIncident = $_POST['placeOfIncident']; 
     $suspectName = $_POST['suspectName'];
     $crimetype = $_POST['crimetype'];
     $statement = $_POST['statement'];
-    $formFileEvidence = handleFileUpload('formFileEvidence', __DIR__ . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'evidences' . DIRECTORY_SEPARATOR);
     $status = $_POST['status'];
+
+    // Handle file uploads
+    $formFileValidID = handleFileUpload('formFileValidID', '../dist/uploads/valid_ids/');
+    $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidences/');
 
     // Insert data into the database
     $result = addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
@@ -60,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     $status = $_POST['status'];
 
     // Handle file uploads
-    $formFileValidID = handleFileUpload('formFileValidID', '../dist/uploads/valid_id/');
-    $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidence/');
+    $formFileValidID = handleFileUpload('formFileValidID', '../dist/uploads/valid_ids/');
+    $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidences/');
 
     // Generate QR code data
     $qrCodeData = "Email: " . $email . "\n";
@@ -71,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     $qrCodeData .= "Suspect: " . $suspectName . "\n";
     $qrCodeData .= "Crime Type: " . $crimetype . "\n";
     $qrCodeData .= "Statement: " . $statement . "\n";
+    $qrCodeData .= "status: " . $status . "\n";
 
     // Generate QR code image and save it
     $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
@@ -195,28 +198,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
+                with font-awesome or any other icon font library -->
                         <li class="nav-item">
                             <a href="dashboard.php" class="nav-link">
                                 <i class="las la-home" id="icon"></i>
                                 <p>
                                     Dashboard
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="user_management.php" class="nav-link">
-                                <i class="las la-user-friends" id="icon"></i>
-                                <p>
-                                    User Mangement
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="crime-category.php" class="nav-link">
-                                <i class="las la-layer-group" id="icon"></i>
-                                <p>
-                                    Crime Category
                                 </p>
                             </a>
                         </li>
@@ -525,7 +512,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                             <?php echo $crimeinfo['formFileEvidence']; ?>
                                                         </td> -->
                                                     <td>
-                                                        <?php echo $crimeinfo['status']; ?>
+                                                        <?php $status = $crimeinfo['status'];
+
+                                                            if ($status == 'Pending') {
+                                                                $badgeClass = 'badge-warning';
+                                                                $textColorClass = 'text-dark'; // Black text color for warning
+                                                            } elseif ($status == 'UnderInvestigation') {
+                                                                $badgeClass = 'badge-primary';
+                                                                $textColorClass = 'text-light'; // White text color for primary
+                                                            } elseif ($status == 'Confirmed') {
+                                                                $badgeClass = 'badge-success';
+                                                                $textColorClass = 'text-light'; // White text color for success
+                                                            } else {
+                                                                $badgeClass = 'badge-secondary';
+                                                                $textColorClass = 'text-light'; // White text color for secondary
+                                                            }
+                                                        ?>
+                                                        <span class="badge <?php echo $badgeClass . ' ' . $textColorClass; ?>">
+                                                            <?php echo $status; ?>
+                                                        </span>
                                                     </td>
                                                     <td style="text-align:center;">
                                                         <button type="button" class="btn btn-success btn-sm"
@@ -538,11 +543,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                             data-target="#viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"><i
                                                                 class="las la-eye"></i>
                                                             View</button>
-                                                        <button type="button" class="btn btn-danger btn-sm"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteCrimeInfo<?php echo $crimeinfo['crime_id']; ?>"><i
-                                                                class="las la-trash-alt"></i>
-                                                            Delete</button>
                                                     </td>
                                                 </tr>
                                                 <!-- Edit Crime Information Modal -->
