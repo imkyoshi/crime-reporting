@@ -1,72 +1,74 @@
 <?php
 session_start();
 
+// Redirect if not logged in or not an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['roles'] !== 'admin') {
-  header("Location: ../auth/login.php");
-  exit;
+    header("Location: ../auth/login.php");
+    exit;
 }
 
+// Include necessary files
 require_once '../config/db.php';
 require_once '../includes/resident_functions.php';
 
-$residents = getAllResidents();
+// Retrieve user information
 $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
 
-// Handle form submission for adding a Resident
+// Handle adding a resident
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addResident'])) {
-  $firstName = $_POST['firstName'];
-  $lastName = $_POST['lastName'];
-  $dateOfBirth = $_POST['dateOfBirth'];
-  $address = $_POST['address'];
-  $phoneNumber = $_POST['phoneNumber'];
-  $email = $_POST['email'];
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $dateOfBirth = $_POST['dateOfBirth'];
+    $address = $_POST['address'];
+    $phoneNumber = $_POST['phoneNumber'];
+    $email = $_POST['email'];
 
-  $result = addResident($firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email);
+    $result = addResident($firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email);
 
-  if ($result === "Resident added successfully.") {
-    header("Location: ../admin/resident-info.php");
-    exit;
-  } elseif ($result === "Resident with this name already exists.") {
-    $addErrorMessage = "Resident already exists.";
-  } else {
-    $addErrorMessage = "Failed to add resident.";
-  }
+    if ($result === "Resident added successfully.") {
+        header("Location: ../admin/resident-info.php");
+        exit;
+    } elseif ($result === "Resident with this name already exists.") {
+        $addErrorMessage = "Resident already exists.";
+    } else {
+        $addErrorMessage = "Failed to add resident.";
+    }
 }
 
-// Handle form submission for updating a Resident
+// Handle updating a resident
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateResident'])) {
-  $resident_id = $_POST['resident_id'];
-  $firstName = $_POST['firstName'];
-  $lastName = $_POST['lastName'];
-  $dateOfBirth = $_POST['dateOfBirth'];
-  $address = $_POST['address'];
-  $phoneNumber = $_POST['phoneNumber'];
-  $email = $_POST['email'];
+    $resident_id = $_POST['resident_id'];
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $dateOfBirth = $_POST['dateOfBirth'];
+    $address = $_POST['address'];
+    $phoneNumber = $_POST['phoneNumber'];
+    $email = $_POST['email'];
 
-  $result = updateResident($resident_id, $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email);
+    $result = updateResident($resident_id, $firstName, $lastName, $dateOfBirth, $address, $phoneNumber, $email);
 
-  if ($result) {
-    $updateSuccessMessage = 'Resident updated successfully.';
-  } else {
-    $errorMessage = 'Failed to update Resident.';
-  }
+    if ($result) {
+        $updateSuccessMessage = 'Resident updated successfully.';
+    } else {
+        $errorMessage = 'Failed to update Resident.';
+    }
 }
 
-// Handle form submission for deleting a Resident
+// Handle deleting a resident
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteResident'])) {
-  $resident_id = $_POST['resident_id'];
+    $resident_id = $_POST['resident_id'];
 
-  $result = deleteResident($resident_id);
-  if ($result) {
-    $deleteSuccessMessage = 'Resident deleted successfully.';
-  } else {
-    $errorMessage = 'Failed to delete Resident.';
-  }
+    $result = deleteResident($resident_id);
+    if ($result) {
+        $deleteSuccessMessage = 'Resident deleted successfully.';
+    } else {
+        $errorMessage = 'Failed to delete Resident.';
+    }
 }
 
+// Pagination
 $limit = isset($_GET['showRecords']) ? intval($_GET['showRecords']) : 5;
-
 $totalResidents = getTotalResidentCount();
 $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $totalPages = 3;
@@ -75,12 +77,13 @@ $endIndex = min($startIndex + $limit, $totalResidents);
 $residents = getResidentsWithLimitAndOffset($limit, $startIndex);
 $paginationLinks = generatePaginationLinks($currentPage, $totalPages);
 
+// Search functionality
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
-  $search = $_GET['search'];
+    $search = $_GET['search'];
 
-  if (!empty($search)) {
-    $residents = getresidentsWithSearchLimitAndOffset($search, $limit, $startIndex);
-  }
+    if (!empty($search)) {
+        $residents = getresidentsWithSearchLimitAndOffset($search, $limit, $startIndex);
+    }
 }
 ?>
 

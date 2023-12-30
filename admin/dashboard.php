@@ -4,11 +4,10 @@ session_start();
 
 // Check if the user is not logged in or not an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['roles'] !== 'admin') {
-  header("Location: ../auth/login.php");
-  exit;
+    header("Location: ../auth/login.php");
+    exit;
 }
 
-// Include database connection and functions files
 // Include database connection and functions files
 require_once '../config/db.php';
 require_once '../includes/functions.php';
@@ -30,6 +29,7 @@ $barChartData = array(
     'months' => $crimeData['months'],
     'years' => $crimeData['years']
 );
+
 // Call the function to get the data for the donut chart
 $donutChartData = getDonutChartData();
 ?>
@@ -62,7 +62,6 @@ $donutChartData = getDonutChartData();
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="las la-bars"></i></a>
                 </li>
             </ul>
-            </ul>
         </nav>
         <!-- /.navbar -->
 
@@ -83,7 +82,7 @@ $donutChartData = getDonutChartData();
                         Welcome
                     </div>
                     <div class="info text-warning">
-                        <?php echo $currentUserInfo['username']; ?>!
+                        <?= $currentUserInfo['username']; ?>!
                     </div>
                 </div>
 
@@ -91,27 +90,26 @@ $donutChartData = getDonutChartData();
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
-                        <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
+                        <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                         <li class="nav-item">
                             <a href="dashboard.php" class="nav-link">
-                                <i class="las la-home"  id="icon"></i>
+                                <i class="las la-home" id="icon"></i>
                                 <p>
                                     Dashboard
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="user_management.php" class="nav-link" >
-                                <i class="las la-user-friends"  id="icon"></i>
+                            <a href="user_management.php" class="nav-link">
+                                <i class="las la-user-friends" id="icon"></i>
                                 <p>
-                                    User Mangement
+                                    User Management
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="crime-category.php" class="nav-link">
-                                <i class="las la-layer-group"  id="icon"></i>
+                                <i class="las la-layer-group" id="icon"></i>
                                 <p>
                                     Crime Category
                                 </p>
@@ -119,7 +117,7 @@ $donutChartData = getDonutChartData();
                         </li>
                         <li class="nav-item">
                             <a href="crime-info.php" class="nav-link">
-                                <i class="las la-gavel"  id="icon"></i>
+                                <i class="las la-gavel" id="icon"></i>
                                 <p>
                                     Crime Information
                                 </p>
@@ -127,15 +125,15 @@ $donutChartData = getDonutChartData();
                         </li>
                         <li class="nav-item">
                             <a href="resident-info.php" class="nav-link">
-                                <i class="las la-archive"  id="icon"></i>
+                                <i class="las la-archive" id="icon"></i>
                                 <p>
-                                    Reisdent Information
+                                    Resident Information
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="../auth/logout.php" class="nav-link">
-                                <i class="las la-sign-out-alt"  id="icon"></i>
+                                <i class="las la-sign-out-alt" id="icon"></i>
                                 <p>
                                     Logout
                                 </p>
@@ -176,8 +174,8 @@ $donutChartData = getDonutChartData();
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
-                                    <h3><?php echo $totalUsers; ?></h3>
-                                    <p>Total User</p>
+                                    <h3><?= $totalUsers; ?></h3>
+                                    <p>Total Users</p>
                                 </div>
                                 <div class="icon" id="icon">
                                     <i class="las la-user-friends"></i>
@@ -189,11 +187,11 @@ $donutChartData = getDonutChartData();
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
-                                    <h3><?php echo $totalCrimeCategories; ?></h3>
-                                    <p>Crime Category</p>
+                                    <h3><?= $totalCrimeCategories; ?></h3>
+                                    <p>Crime Categories</p>
                                 </div>
                                 <div class="icon" id="icon">
-                                  <i class="las la-layer-group"></i>
+                                    <i class="las la-layer-group"></i>
                                 </div>
                             </div>
                         </div>
@@ -202,7 +200,7 @@ $donutChartData = getDonutChartData();
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
-                                    <h3><?php echo $totalCrimeinfo; ?></h3>
+                                    <h3><?= $totalCrimeinfo; ?></h3>
                                     <p>Crime Info</p>
                                 </div>
                                 <div class="icon" id="icon">
@@ -215,7 +213,7 @@ $donutChartData = getDonutChartData();
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
-                                    <h3><?php echo $totalResidents; ?></h3>
+                                    <h3><?= $totalResidents; ?></h3>
                                     <p>Resident Info</p>
                                 </div>
                                 <div class="icon" id="icon">
@@ -259,7 +257,7 @@ $donutChartData = getDonutChartData();
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="donutChart" 
+                                    <canvas id="donutChart"
                                         style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                                 </div>
                                 <!-- /.card-body -->
@@ -270,20 +268,18 @@ $donutChartData = getDonutChartData();
                             <!-- Default box -->
                             <div class="card card-outline card-primary">
                                 <div class="card-body">
-                                    <h3> Welcome to Dashboard</h3>
+                                    <h3>Welcome to the Dashboard</h3>
                                     <p class="text-xl-start text-secondary">
                                         At the San Luis Municipality Police Station, our mission is to serve and protect
-                                        our vibrant community with
-                                        unwavering dedication and integrity. With a team of highly trained officers and
-                                        staff, we are committed to
-                                        ensuring the safety and security of all residents and visitors.
+                                        our vibrant community with unwavering dedication and integrity. With a team of
+                                        highly trained officers and staff, we are committed to ensuring the safety and
+                                        security of all residents and visitors.
                                     </p>
                                     <p class="text-xl-start text-secondary">
                                         We work tirelessly to build strong relationships with the people we serve,
-                                        fostering trust and cooperation.
-                                        Together, we strive for a safer, more harmonious San Luis, where everyone can
-                                        thrive. Your safety is our top
-                                        priority, and we are here for you 24/7."
+                                        fostering trust and cooperation. Together, we strive for a safer, more
+                                        harmonious San Luis, where everyone can thrive. Your safety is our top
+                                        priority, and we are here for you 24/7.
                                     </p>
                                 </div>
                                 <!-- /.card-body -->
@@ -346,9 +342,6 @@ $donutChartData = getDonutChartData();
     <script src="../dist/js/areachart.js?v=123"></script>
     <script src="../dist/js/charts.js?v=123"></script>
     <!-- <script src="../dist/js/inspect.js"></script> -->
-</body>
-
-</html>
 </body>
 
 </html>

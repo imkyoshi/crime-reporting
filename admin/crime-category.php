@@ -18,47 +18,42 @@ $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
 
 // Handle form submission for adding a Category
-// Handle form submission for adding a Category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCategory'])) {
-  $CrimeType = $_POST['CrimeType'];
-  $description = $_POST['description'];
+    $CrimeType = htmlspecialchars($_POST['CrimeType']);
+    $description = htmlspecialchars($_POST['description']);
 
-  // Add the Category to the database
-  $result = addCategory($CrimeType, $description);
+    // Add the Category to the database
+    $result = addCategory($CrimeType, $description);
 
-  if ($result === "Category added successfully.") {
-    header("Location: crime-category.php");
-    exit;
-  } elseif ($result === "Category with this name already exists.") {
-    $addErrorMessage = "Category already exists.";
-  } else {
-    $addErrorMessage = "Failed to add category.";
-  }
+    if ($result === "Category added successfully.") {
+        header("Location: crime-category.php");
+        exit;
+    } elseif ($result === "Category with this name already exists.") {
+        $addErrorMessage = "Category already exists.";
+    } else {
+        $addErrorMessage = "Failed to add category.";
+    }
 }
 
-
-
-// Handle form submission for updating a Category
 // Handle form submission for updating a Category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCategory'])) {
-  $categoryID = $_POST['categoryID'];
-  $CrimeType = $_POST['CrimeType'];
-  $description = $_POST['description'];
+    $categoryID = htmlspecialchars($_POST['categoryID']);
+    $CrimeType = htmlspecialchars($_POST['CrimeType']);
+    $description = htmlspecialchars($_POST['description']);
 
-  // Update the Category in the database
-  $result = updateCategory($categoryID, $CrimeType, $description);
+    // Update the Category in the database
+    $result = updateCategory($categoryID, $CrimeType, $description);
 
-  if ($result) {
-    $updateSuccessMessage = 'Category updated successfully.';
-  } else {
-    $errorMessage = 'Failed to update Category.';
-  }
+    if ($result) {
+        $updateSuccessMessage = 'Category updated successfully.';
+    } else {
+        $errorMessage = 'Failed to update Category.';
+    }
 }
-
 
 // Handle form submission for deleting a Category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
-    $categoryID = $_POST['categoryID'];
+    $categoryID = htmlspecialchars($_POST['categoryID']);
 
     // Delete the Category from the database
     $result = deleteCategory($categoryID);
@@ -73,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
 $limit = isset($_GET['showRecords']) ? intval($_GET['showRecords']) : 5; // Number of records to show per page
 
 $totalcategory = getTotalCategoryCount();
-$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1; 
+$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $totalPages = 3;
 $startIndex = ($currentPage - 1) * $limit;
 $endIndex = min($startIndex + $limit, $totalcategory);
@@ -82,7 +77,7 @@ $paginationLinks = generatePaginationLinks($currentPage, $totalPages);
 
 // Handle form submission for searching category
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
-    $search = $_GET['search'];
+    $search = htmlspecialchars($_GET['search']);
 
     // If search query is not empty, retrieve category with search filter
     if (!empty($search)) {

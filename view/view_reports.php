@@ -20,7 +20,6 @@ $user_id = $_SESSION['user_id'];
 // Retrieve user information from the database
 $user = getUserById($user_id);
 
-
 // Handle logout request
 if (isset($_GET['logout'])) {
     // Unset all session variables
@@ -43,6 +42,7 @@ $startIndex = ($currentPage - 1) * $limit;
 $endIndex = min($startIndex + $limit, $totalResidents);
 $crimeinfos = getCrimeInfoWithLimitAndOffset($limit, $startIndex);
 $paginationLinks = generatePaginationLinks($currentPage, $totalPages);
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
     $search = $_GET['search'];
 
@@ -53,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<!--divinectorweb.com-->
 
 <head>
     <meta charset="UTF-8">
@@ -113,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                         </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <?php echo $user['username']; ?>
+                                    <?php echo htmlspecialchars($user['username']); ?>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <!-- <a class="dropdown-item" href="../auth/user_profile.php">My Profile</a> -->
@@ -131,138 +130,129 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
         </div>
     </nav>
 
-<!-- about section starts -->
-<section id="viewreport" class="section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 ps-lg-5 mt-md-5">
-                <div class="card card-outline card-primary">
-                    <div class="card-header bg-white">
-                        <h4 class="text-center pt-2">My reports</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="row mb-2">
-                            <!-- SHOW RECORDS (unchanged) -->
-                            <div class="col-sm-9" style="margin-top: 15px;">
-                                <form id="showRecordsForm" method="GET" action="">
-                                    <div class="form-group">
-                                        <label class="d-flex align-items-center pt-4">
-                                         <span class="ml-2"><i class="las la-filter"></i>Show </span>
-                                            <select class="form-control form-control-sm" id="showRecords"
-                                                name="showRecords" style="width: 60px; text-align:center;" onchange="this.form.submit()">
-                                                <option value="5" <?php if ($limit == 5)
-                                                    echo 'selected'; ?>>5</option>
-                                                <option value="10" <?php if ($limit == 10)
-                                                    echo 'selected'; ?>>10
-                                                </option>
-                                                <option value="20" <?php if ($limit == 20)
-                                                    echo 'selected'; ?>>20
-                                                </option>
-                                                <option value="50" <?php if ($limit == 50)
-                                                    echo 'selected'; ?>>50
-                                                </option>
-                                            </select>
-                                            <span class="ml-2"><i class="las la-filter ps-2"></i> records per
-                                                page</span>
-                                        </label>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- SEARCH (moved to the left) -->
-                            <div class="col-sm-3" style="margin-top: 15px;">
-                                <div class="form-inline">
-                                    <form id="searchForm" method="GET" action="">
-                                        <div class="form-group mx-sm-3 mb-2 ps-5">
-                                            <label for="searchInput" class="mr-2"><i class="las la-search"></i>
-                                                Search:</label>
-                                            <input type="text" class="form-control" id="searchInput" name="search"
-                                                style="max-width: 200px;"
-                                                value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
+    <!-- about section starts -->
+    <section id="viewreport" class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 ps-lg-5 mt-md-5">
+                    <div class="card card-outline card-primary">
+                        <div class="card-header bg-white">
+                            <h4 class="text-center pt-2">My reports</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <!-- SHOW RECORDS (unchanged) -->
+                                <div class="col-sm-9" style="margin-top: 15px;">
+                                    <form id="showRecordsForm" method="GET" action="">
+                                        <div class="form-group">
+                                            <label class="d-flex align-items-center pt-4">
+                                                <span class="ml-2"><i class="las la-filter"></i>Show </span>
+                                                <select class="form-control form-control-sm" id="showRecords"
+                                                    name="showRecords" style="width: 60px; text-align:center;" onchange="this.form.submit()">
+                                                    <option value="5" <?php if ($limit == 5)
+                                                        echo 'selected'; ?>>5</option>
+                                                    <option value="10" <?php if ($limit == 10)
+                                                        echo 'selected'; ?>>10
+                                                    </option>
+                                                    <option value="20" <?php if ($limit == 20)
+                                                        echo 'selected'; ?>>20
+                                                    </option>
+                                                    <option value="50" <?php if ($limit == 50)
+                                                        echo 'selected'; ?>>50
+                                                    </option>
+                                                </select>
+                                                <span class="ml-2"><i class="las la-filter ps-2"></i> records per
+                                                    page</span>
+                                            </label>
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="table-responsive">
-                            <table class="table" id="residentTable">
-                                <thead>
-                                    <tr>
-                                        <th>QR Codes</th>
-                                        <th>Date and Time of Report</th>
-                                        <th>Date and Time of Incident</th>
-                                        <th>Place of Incident</th>
-                                        <th>Suspect Name</th>
-                                        <th>Type of Crime</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($crimeinfos as $crimeinfo): ?>
-                                        <tr>
-                                            <td>
-                                                <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="60" height="60">
-                                            </td>
-                                            <td>
-                                                <?php echo $crimeinfo['dateTimeOfReport']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $crimeinfo['dateTimeOfIncident']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $crimeinfo['placeOfIncident']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $crimeinfo['suspectName']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $crimeinfo['CrimeType']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $crimeinfo['status']; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- SHOW ENTRIES -->
-                        <div class="row mb-2">
-                            <div class="col-sm-6">
-                                <p style="font-size: 14px;">
-                                    Showing
-                                    <?php echo $startIndex + 1; ?> to
-                                    <?php echo $endIndex; ?> of
-                                    <?php echo $totalCrimeinfo; ?> entries
-                                </p>
+                                <!-- SEARCH (moved to the left) -->
+                                <div class="col-sm-3" style="margin-top: 15px;">
+                                    <div class="form-inline">
+                                        <form id="searchForm" method="GET" action="">
+                                            <div class="form-group mx-sm-3 mb-2 ps-5">
+                                                <label for="searchInput" class="mr-2"><i class="las la-search"></i>
+                                                    Search:</label>
+                                                <input type="text" class="form-control" id="searchInput" name="search"
+                                                    style="max-width: 200px;"
+                                                    value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <!-- PAGINATION -->
-                            <div class="col-sm-6">
-                                <div class="d-flex justify-content-end align-items-center">
-                                    <nav>
-                                        <ul class="pagination">
-                                            <?php echo generatePaginationLinks($currentPage, $totalPages); ?>
-                                        </ul>
-                                    </nav>
+
+                            <div class="table-responsive">
+                                <table class="table" id="residentTable">
+                                    <thead>
+                                        <tr>
+                                            <th>QR Codes</th>
+                                            <th>Date and Time of Report</th>
+                                            <th>Date and Time of Incident</th>
+                                            <th>Place of Incident</th>
+                                            <th>Suspect Name</th>
+                                            <th>Type of Crime</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($crimeinfos as $crimeinfo): ?>
+                                            <tr>
+                                                <td>
+                                                    <img src="<?php echo '../dist/qrcodes/' . htmlspecialchars($crimeinfo['qrcode']); ?>" alt="QR Code" width="60" height="60">
+                                                </td>
+                                                <td>
+                                                    <?php echo htmlspecialchars($crimeinfo['dateTimeOfReport']); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo htmlspecialchars($crimeinfo['dateTimeOfIncident']); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo htmlspecialchars($crimeinfo['placeOfIncident']); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo htmlspecialchars($crimeinfo['suspectName']); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo htmlspecialchars($crimeinfo['CrimeType']); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo htmlspecialchars($crimeinfo['status']); ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-sm-6">
+                                    <p style="font-size: 14px;">
+                                        Showing
+                                        <?php echo $startIndex + 1; ?> to
+                                        <?php echo $endIndex; ?> of
+                                        <?php echo $totalCrimeinfo; ?> entries
+                                    </p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <nav>
+                                            <ul class="pagination">
+                                                <?php echo generatePaginationLinks($currentPage, $totalPages); ?>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- /.card-body -->
                 </div>
             </div>
         </div>
-    </div>
-</section>
-<!-- about section Ends -->
+    </section>
 
-
-
-    <!-- about section Ends -->
-
-    <!-- contact ends -->
-    <!-- footer starts -->
     <footer class="p-5 bg-dark text-white text-center position-relative">
         <div class="container">
             <p class="lead">Copyright &copy; 2023 San Luis Municipality Police Station</p>
@@ -273,9 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
             <a href="#"><i class="bi bi-instagram text-light mx-1"></i></a>
         </div>
     </footer>
-    <!-- footer ends -->
-    <!-- All Js -->
-    <!-- Mapbox JS -->
+
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
 
     <script>
@@ -293,7 +281,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
     <script src="../dist/js/adminlte.min.js"></script>
     <script src="../dist/js/style.js"></script>
 
-  
 </body>
 
 </html>
