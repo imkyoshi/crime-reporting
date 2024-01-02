@@ -266,9 +266,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                             <button type="button" class="btn btn-primary btn-sm float-left"
                                                 data-toggle="modal" data-target="#addResidentModal"><i
                                                     class="las la-plus-circle"></i> Add New Resident</button>
-                                                <button type="button" class="btn btn-success btn-sm float-left" style="margin-left:10px;" id="printButton">
+                                                <!-- <button type="button" class="btn btn-success btn-sm float-left" style="margin-left:10px;" id="printButton">
                                                     <i class="las la-print"></i> Print
-                                                </button>
+                                                </button> -->
                                         </div>
 
                                         <!-- Add Resident Modal -->
