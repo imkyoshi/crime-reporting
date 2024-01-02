@@ -1,7 +1,4 @@
-function printModal1() {
-    // Set the title directly using document.title
-    document.title = "Crime Report Print Forms";
-
+function printModal(crimeId) {
     // Header content with styles
     var headerContent = `
         <style>
@@ -72,19 +69,20 @@ function printModal1() {
             }
         </style>
         <div class="header">
-            <img src="../dist/img/sanluislogo.png" style="width:100px;height:100px;" alt="Left Logo" class="logo">
+            <img src="../dist/img/sanluislogo.png" width="100" height="100" alt="Left Logo" class="logo" loading="lazy">
             <div class="center-content">
                 <h4>San Luis Municipal Police Station</h4>
                 <h5>Poblacion, San Luis, Philippines</h5>
                 <h5><b>Hotline No: </b>0926 641 6290 <b>Telephone No: </b>(043) 741-5589</h5>
                 <h5><b>sanluismpsbatangas@yahoo.com</h5><br>
-                <h4 class="crime">RESIDENT LIST </h4>
+                <h4 class="crime">CRIME REPORT </h4>
             </div>
-            <img src="../dist/img/pnp.png" style="width:100px;height:100px;" alt="QR Code">
+            <img src="../dist/img/pnp.png" width="100" height="100" alt="QR Code" loading="lazy">
         </div>
     `;
     // Modal body content
-    var printableContent = headerContent + document.getElementById('printable-modal-body1').innerHTML;
+    var modalId = 'viewCrimeInfoModal' + crimeId;
+    var printableContent = headerContent + document.getElementById(modalId).getElementsByClassName('modal-body')[0].innerHTML;
     
     var originalContent = document.body.innerHTML;
 

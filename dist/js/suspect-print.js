@@ -1,6 +1,6 @@
 function printModal1() {
     // Set the title directly using document.title
-    document.title = "Crime Report Print Forms";
+    document.title = "Suspect Information Print Form";
 
     // Header content with styles
     var headerContent = `
@@ -78,7 +78,7 @@ function printModal1() {
                 <h5>Poblacion, San Luis, Philippines</h5>
                 <h5><b>Hotline No: </b>0926 641 6290 <b>Telephone No: </b>(043) 741-5589</h5>
                 <h5><b>sanluismpsbatangas@yahoo.com</h5><br>
-                <h4 class="crime">RESIDENT LIST </h4>
+                <h4 class="crime">SUSPECT LIST </h4>
             </div>
             <img src="../dist/img/pnp.png" style="width:100px;height:100px;" alt="QR Code">
         </div>

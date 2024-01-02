@@ -148,6 +148,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Theme style -->
     <link rel="stylesheet" href="../dist/css/adminlte.min.css">
     <link rel="stylesheet" href="../dist/css/viewprint.css">
+    <link rel="stylesheet" href="../dist/css/dashboard.css">
     <!-- Mapquest CDN -->
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
@@ -525,7 +526,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                             <?php echo $crimeinfo['formFileEvidence']; ?>
                                                         </td> -->
                                                     <td>
-                                                        <?php echo $crimeinfo['status']; ?>
+                                                        <?php $status = $crimeinfo['status'];
+
+                                                            if ($status == 'Pending') {
+                                                                $badgeClass = 'badge-warning';
+                                                                $textColorClass = 'text-dark'; // Black text color for warning
+                                                            } elseif ($status == 'UnderInvestigation') {
+                                                                $badgeClass = 'badge-primary';
+                                                                $textColorClass = 'text-light'; // White text color for primary
+                                                            } elseif ($status == 'Confirmed') {
+                                                                $badgeClass = 'badge-success';
+                                                                $textColorClass = 'text-light'; // White text color for success
+                                                            } else {
+                                                                $badgeClass = 'badge-secondary';
+                                                                $textColorClass = 'text-light'; // White text color for secondary
+                                                            }
+                                                        ?>
+                                                        <span class="badge <?php echo $badgeClass . ' ' . $textColorClass; ?>">
+                                                            <?php echo $status; ?>
+                                                        </span>
                                                     </td>
                                                     <td style="text-align:center;">
                                                         <button type="button" class="btn btn-success btn-sm"
@@ -533,11 +552,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                             data-target="#editCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"><i
                                                                 class="las la-edit"></i>
                                                             Update</button>
-                                                        <button type="button" class="btn btn-warning btn-sm"
+                                                        <!-- <button type="button" class="btn btn-warning btn-sm"
                                                             data-toggle="modal"
                                                             data-target="#viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>"><i
                                                                 class="las la-eye"></i>
-                                                            View</button>
+                                                            View</button> -->
                                                         <button type="button" class="btn btn-danger btn-sm"
                                                             data-toggle="modal"
                                                             data-target="#deleteCrimeInfo<?php echo $crimeinfo['crime_id']; ?>"><i

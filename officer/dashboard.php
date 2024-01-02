@@ -19,6 +19,7 @@ $users = getAllUsers();
 $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
 $totalResidents = getTotalResidentCount();
+$totalSuspectInfo = getTotalSuspectInfoCount();
 $totalCrimeinfo = getTotalCrimeInfoCount();
 ?>
 
@@ -98,6 +99,14 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="../officer/suspect-info.php" class="nav-link">
+                                <i class="las la-gavel" id="icon"></i>
+                                <p>
+                                    Suspect Information
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="../officer/resident-info.php" class="nav-link">
                                 <i class="las la-archive" id="icon"></i>
                                 <p>
@@ -145,7 +154,7 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                 <div class="container-fluid">
                     <div class="row">
                         <!-- ./col -->
-                        <div class="col-lg-6 col-6">
+                        <div class="col-lg-4 col-4">
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
@@ -157,8 +166,20 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-4 col-4">
+                            <!-- small box -->
+                            <div class="small-box bg-navy">
+                                <div class="inner">
+                                    <h3><?php echo $totalSuspectInfo; ?></h3>
+                                    <p>Suspect Info</p>
+                                </div>
+                                <div class="icon" id="icon">
+                                    <i class="las la-gavel"></i>
+                                </div>
+                            </div>
+                        </div>
                         <!-- ./col -->
-                        <div class="col-lg-6 col-6">
+                        <div class="col-lg-4 col-4">
                             <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">

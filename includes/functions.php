@@ -276,6 +276,21 @@ function getTotalCrimeCategoryCount()
     return 0;
 }
 
+function getTotalSuspectInfoCount()
+{
+    global $mysqli;
+
+    $query = "SELECT COUNT(*) as total FROM suspect_information";
+    $result = $mysqli->query($query);
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    }
+
+    return 0;
+}
+
 function getTotalResidentCount()
 {
     global $mysqli;

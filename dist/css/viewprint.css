@@ -1,17 +1,36 @@
-.logo {
-    width: 100px;
-    height: 100px;
-}
 
-.modal-header {
+/* .modal-footer {
+    display: none;
+} */
+.container {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    text-align: center;
 }
 
-.modal-title {
-    margin: 0; /* Remove default margin for the modal title */
-    font-size: 1.5rem; /* Adjust font size as needed */
+.left {
+    flex: 0.7;
+    margin-left: 3px;
+    padding-top: 5px;
+
+}
+
+.middle{
+    flex: 0.7;
+    margin-left: px;
+    padding-top: 5px;
+    box-sizing: border-box;
+}
+
+.right {
+    margin-left: 30px;
+    padding-top: 5px;
+
+}
+
+/* Add additional styling as needed */
+.form-group {
+    margin-bottom: 10px;
+}
+
+p {
+    margin: 0;
 }

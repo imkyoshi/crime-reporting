@@ -104,6 +104,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../dist/css/adminlte.min.css">
     <link rel="stylesheet" href="../dist/css/dashboard.css">
     <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            #actionss {
+                display: none;
+                min-width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -161,6 +169,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 <i class="las la-gavel" id="icon"></i>
                                 <p>
                                     Crime Information
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../officer/suspect-info.php" class="nav-link">
+                                <i class="las la-gavel" id="icon"></i>
+                                <p>
+                                    Suspect Information
                                 </p>
                             </a>
                         </li>
@@ -253,14 +269,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <button type="button" class="btn btn-primary btn-sm float-left"
                                                 data-toggle="modal" data-target="#addResidentModal"><i
                                                     class="las la-plus-circle"></i> Add New Resident</button>
-                                                <button type="button" class="btn btn-success btn-sm float-left" onClick="window.print()" style="margin-left:10px;"><i class="las la-print"></i> Print</button>
+                                                <button type="button" class="btn btn-success btn-sm float-left" style="margin-left:10px;"  onClick="printModal1()" ><i class="las la-print"></i> Print</button>
                                         </div>
 
 
                                         <!-- Add Resident Modal -->
                                         <div class="modal fade" id="addResidentModal" tabindex="-1" role="dialog"
                                             aria-labelledby="addResidentModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="addResidentModalLabel">Add New
@@ -326,18 +342,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                             name="showRecords" style="width: 120px;"
                                                             onchange="this.form.submit()">
                                                             <option value="5" <?php if ($limit == 5)
-                                                              echo 'selected'; ?>
+                                                                echo 'selected'; ?>
                                                                 >5</option>
                                                             <option value="10" <?php if ($limit == 10)
-                                                              echo 'selected';
+                                                                echo 'selected';
                                                             ?>>10
                                                             </option>
                                                             <option value="20" <?php if ($limit == 20)
-                                                              echo 'selected';
+                                                                echo 'selected';
                                                             ?>>20
                                                             </option>
                                                             <option value="50" <?php if ($limit == 50)
-                                                              echo 'selected';
+                                                                echo 'selected';
                                                             ?>>50
                                                             </option>
                                                         </select>
@@ -363,7 +379,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         </div>
                                     </div>
                                     <!-- Category TABLE -->
-                                    <div class="table-responsive">
+                                    <div id="printable-modal-body1" class="table-responsive">
                                         <table class="table">
                                             <thead>
                                                 <tr>
@@ -373,152 +389,232 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     <th>Address</th>
                                                     <th>Phone Number</th>
                                                     <th>Email</th>
-                                                    <th style="text-align: center;">Action</th>
+                                                    <th id="actionss" style="text-align: center;">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php foreach ($residents as $resident): ?>
-                                                  <tr>
-                                                      <td>
-                                                          <?php echo $resident['firstName']; ?>
-                                                      </td>
-                                                      <td>
-                                                          <?php echo $resident['lastName']; ?>
-                                                      </td>
-                                                      <td>
-                                                          <?php echo $resident['dateOfBirth']; ?>
-                                                      </td>
-                                                      <td>
-                                                          <?php echo $resident['address']; ?>
-                                                      </td>
-                                                      <td>
-                                                          <?php echo $resident['phoneNumber']; ?>
-                                                      </td>
-                                                      <td>
-                                                          <?php echo $resident['email']; ?>
-                                                      </td>
-                                                      <td style="text-align:center;">
-                                                          <button type="button" class="btn btn-success btn-sm"
-                                                              data-toggle="modal"
-                                                              data-target="#editResidentModal<?php echo $resident['resident_id']; ?>"><i
-                                                                  class="las la-edit"></i> Update</button>
-                                                      </td>
-                                                  </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $resident['firstName']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $resident['lastName']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $resident['dateOfBirth']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $resident['address']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $resident['phoneNumber']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $resident['email']; ?>
+                                                        </td>
+                                                        <td id="actionss" style="text-align:center;">
+                                                            <button type="button" class="btn btn-success btn-sm"
+                                                                data-toggle="modal"
+                                                                data-target="#editResidentModal<?php echo $resident['resident_id']; ?>"><i
+                                                                    class="las la-edit"></i> Update</button>
+                                                            <button type="button" class="btn btn-warning btn-sm"
+                                                                data-toggle="modal"
+                                                                data-target="#viewResidentModal<?php echo $resident['resident_id']; ?>"><i
+                                                                    class="las la-eye"></i>
+                                                                View</button>   
+                                                        </td>
+                                                    </tr>
 
-                                                  <!-- Edit Resident Modal -->
-                                                  <div class="modal fade"
-                                                      id="editResidentModal<?php echo $resident['resident_id']; ?>"
-                                                      tabindex="-1" role="dialog"
-                                                      aria-labelledby="editResidentModalLabel<?php echo $resident['resident_id']; ?>"
-                                                      aria-hidden="true">
-                                                      <div class="modal-dialog modal-dialog-centered" role="document">
-                                                          <div class="modal-content">
-                                                              <div class="modal-header">
-                                                                  <h5 class="modal-title"
-                                                                      id="editResidentModalLabel<?php echo $resident['resident_id']; ?>">
-                                                                      Edit Resident
-                                                                  </h5>
-                                                                  <button type="button" class="close" data-dismiss="modal"
-                                                                      aria-label="Close">
-                                                                      <span aria-hidden="true">&times;</span>
-                                                                  </button>
-                                                              </div>
-                                                              <div class="modal-body">
-                                                                  <form method="POST" action="">
-                                                                      <input type="hidden" name="resident_id"
-                                                                          value="<?php echo $resident['resident_id']; ?>">
-                                                                      <div class="form-group">
-                                                                          <label for="editFirstName">First Name</label>
-                                                                          <input type="text" class="form-control"
-                                                                              id="editFirstName" name="firstName"
-                                                                              value="<?php echo $resident['firstName']; ?>"
-                                                                              required>
-                                                                      </div>
-                                                                      <div class="form-group">
-                                                                          <label for="editLastName">Last Name</label>
-                                                                          <input type="text" class="form-control"
-                                                                              id="editLastName" name="lastName"
-                                                                              value="<?php echo $resident['lastName']; ?>"
-                                                                              required>
-                                                                      </div>
-                                                                      <div class="form-group">
-                                                                          <label for="editDateOfBirth">Date of
-                                                                              Birth</label>
-                                                                          <input type="date" class="form-control"
-                                                                              id="editDateOfBirth" name="dateOfBirth"
-                                                                              value="<?php echo $resident['dateOfBirth']; ?>"
-                                                                              required>
-                                                                      </div>
-                                                                      <div class="form-group">
-                                                                          <label for="editAddress">Address</label>
-                                                                          <input type="text" class="form-control"
-                                                                              id="editAddress" name="address"
-                                                                              value="<?php echo $resident['address']; ?>"
-                                                                              required>
-                                                                      </div>
-                                                                      <div class="form-group">
-                                                                          <label for="editPhoneNumber">Phone
-                                                                              Number</label>
-                                                                          <input type="tel" class="form-control"
-                                                                              id="editPhoneNumber" name="phoneNumber"
-                                                                              value="<?php echo $resident['phoneNumber']; ?>"
-                                                                              required>
-                                                                      </div>
-                                                                      <div class="form-group">
-                                                                          <label for="editEmail">Email</label>
-                                                                          <input type="email" class="form-control"
-                                                                              id="editEmail" name="email"
-                                                                              value="<?php echo $resident['email']; ?>"
-                                                                              required>
-                                                                      </div>
-                                                                      <div class="modal-footer">
-                                                                          <button type="button" class="btn btn-secondary"
-                                                                              data-dismiss="modal">Cancel</button>
-                                                                          <button type="submit" class="btn btn-primary"
-                                                                              name="updateResident">Save</button>
-                                                                      </div>
-                                                                  </form>
-                                                              </div>
-                                                          </div>
-                                                      </div>
-                                                  </div>
+                                        <!-- Edit Resident Modal -->
+                                            <div class="modal fade"
+                                                id="editResidentModal<?php echo $resident['resident_id']; ?>"
+                                                tabindex="-1" role="dialog"
+                                                aria-labelledby="editResidentModalLabel<?php echo $resident['resident_id']; ?>"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="editResidentModalLabel<?php echo $resident['resident_id']; ?>">
+                                                                Edit Resident
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form method="POST" action="">
+                                                                <input type="hidden" name="resident_id"
+                                                                    value="<?php echo $resident['resident_id']; ?>">
+                                                                <div class="form-group">
+                                                                    <label for="editFirstName">First Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editFirstName" name="firstName"
+                                                                        value="<?php echo $resident['firstName']; ?>"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="editLastName">Last Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editLastName" name="lastName"
+                                                                        value="<?php echo $resident['lastName']; ?>"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="editDateOfBirth">Date of
+                                                                        Birth</label>
+                                                                    <input type="date" class="form-control"
+                                                                        id="editDateOfBirth" name="dateOfBirth"
+                                                                        value="<?php echo $resident['dateOfBirth']; ?>"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="editAddress">Address</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editAddress" name="address"
+                                                                        value="<?php echo $resident['address']; ?>"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="editPhoneNumber">Phone
+                                                                        Number</label>
+                                                                    <input type="tel" class="form-control"
+                                                                        id="editPhoneNumber" name="phoneNumber"
+                                                                        value="<?php echo $resident['phoneNumber']; ?>"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="editEmail">Email</label>
+                                                                    <input type="email" class="form-control"
+                                                                        id="editEmail" name="email"
+                                                                        value="<?php echo $resident['email']; ?>"
+                                                                        required>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">Cancel</button>
+                                                                    <button type="submit" class="btn btn-primary"
+                                                                        name="updateResident">Save</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
 
-                                                  <!-- Delete Category Modal -->
-                                                  <!-- Delete Resident Modal -->
-                                                  <div class="modal fade"
-                                                      id="deleteResidentModal<?php echo $resident['resident_id']; ?>"
-                                                      tabindex="-1" role="dialog"
-                                                      aria-labelledby="deleteResidentModalLabel<?php echo $resident['resident_id']; ?>"
-                                                      aria-hidden="true">
-                                                      <div class="modal-dialog modal-dialog-centered" role="document">
-                                                          <div class="modal-content">
-                                                              <div class="modal-header">
-                                                                  <h5 class="modal-title"
-                                                                      id="deleteResidentModalLabel<?php echo $resident['resident_id']; ?>">
-                                                                      Delete Resident
-                                                                  </h5>
-                                                                  <button type="button" class="close" data-dismiss="modal"
-                                                                      aria-label="Close">
-                                                                      <span aria-hidden="true">&times;</span>
-                                                                  </button>
-                                                              </div>
-                                                              <div class="modal-body">
-                                                                  <p>Are you sure you want to delete this Resident?</p>
-                                                              </div>
-                                                              <div class="modal-footer">
-                                                                  <form method="POST" action="">
-                                                                      <input type="hidden" name="resident_id"
-                                                                          value="<?php echo $resident['resident_id']; ?>">
-                                                                      <button type="button" class="btn btn-secondary"
-                                                                          data-dismiss="modal">Cancel</button>
-                                                                      <button type="submit" class="btn btn-danger"
-                                                                          name="deleteResident">Delete</button>
-                                                                  </form>
-                                                              </div>
-                                                          </div>
-                                                      </div>
-                                                  </div>
+                                            <!-- View Resident Modal -->
+                                            <div class="modal fade"
+                                                id="viewResidentModal<?php echo $resident['resident_id']; ?>"
+                                                tabindex="-1" role="dialog"
+                                                aria-labelledby="viewResidentModalLabel<?php echo $resident['resident_id']; ?>"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="viewResidentModalLabel<?php echo $resident['resident_id']; ?>">
+                                                                View Resident
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form method="POST" action="">
+                                                                <input type="hidden" name="resident_id"
+                                                                    value="<?php echo $resident['resident_id']; ?>">
+                                                                <div class="form-group">
+                                                                    <label for="viewFirstName">First Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="viewFirstName" name="firstName"
+                                                                        value="<?php echo $resident['firstName']; ?>"
+                                                                        readonly>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="viewLastName">Last Name</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="viewLastName" name="lastName"
+                                                                        value="<?php echo $resident['lastName']; ?>"
+                                                                        readonly>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="viewDateOfBirth">Date of
+                                                                        Birth</label>
+                                                                    <input type="date" class="form-control"
+                                                                        id="viewDateOfBirth" name="dateOfBirth"
+                                                                        value="<?php echo $resident['dateOfBirth']; ?>"
+                                                                        readonly>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="viewAddress">Address</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="viewAddress" name="address"
+                                                                        value="<?php echo $resident['address']; ?>"
+                                                                        readonly>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="viewPhoneNumber">Phone
+                                                                        Number</label>
+                                                                    <input type="tel" class="form-control"
+                                                                        id="viewPhoneNumber" name="phoneNumber"
+                                                                        value="<?php echo $resident['phoneNumber']; ?>"
+                                                                        readonly>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="viewEmail">Email</label>
+                                                                    <input type="email" class="form-control"
+                                                                        id="viewEmail" name="email"
+                                                                        value="<?php echo $resident['email']; ?>"
+                                                                        readonly>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Delete Resident Modal -->
+                                            <div class="modal fade"
+                                                id="deleteResidentModal<?php echo $resident['resident_id']; ?>"
+                                                tabindex="-1" role="dialog"
+                                                aria-labelledby="deleteResidentModalLabel<?php echo $resident['resident_id']; ?>"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="deleteResidentModalLabel<?php echo $resident['resident_id']; ?>">
+                                                                Delete Resident
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure you want to delete this Resident?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form method="POST" action="">
+                                                                <input type="hidden" name="resident_id"
+                                                                    value="<?php echo $resident['resident_id']; ?>">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-danger"
+                                                                    name="deleteResident">Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                                 <?php endforeach; ?>
                                             </tbody>
@@ -577,6 +673,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../dist/js/adminlte.min.js"></script>
     <script src="../dist/js/sucessmessage.js"></script>
     <script src="../dist/js/style.js"></script>
+    <script src="../dist/js/resident-print.js"></script>
     <script src="../dist/js/inspect.js"></script>
 </body>
 

@@ -1,6 +1,6 @@
 function printModal1() {
     // Set the title directly using document.title
-    document.title = "Crime Report Print Forms";
+    document.title = "Resident Information Print Form";
 
     // Header content with styles
     var headerContent = `
