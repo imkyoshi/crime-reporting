@@ -158,7 +158,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
     <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <style>
         @media print {
 
