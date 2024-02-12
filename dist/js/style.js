@@ -1,13 +1,14 @@
-function togglePasswordVisibility() {
-        var passwordInput = document.querySelector('.password-input');
+function togglePasswordVisibility(event, userId) {
+    var clickedButton = event.currentTarget;
+    var parentRow = clickedButton.closest('tr');
+    var passwordInput = parentRow.querySelector('#password_' + userId);
 
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-        } else {
-            passwordInput.type = 'password';
-        }
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+    } else {
+        passwordInput.type = 'password';
     }
-
+}
 
 // Sidebar toggle
 $(document).ready(function () {

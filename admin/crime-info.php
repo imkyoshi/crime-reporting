@@ -21,7 +21,8 @@ $records = retrieveRecords();
 // Handle form submission for adding a Crime Information
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
     // Retrieve form data
-    $email = $_POST['email'];
+    $fullName = $_POST['fullName'];
+    $phoneNumber = $_POST['phoneNumber'];
     $formFileValidID  = handleFileUpload('formFileValidID', __DIR__ . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'valid_ids' . DIRECTORY_SEPARATOR);
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
@@ -33,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
     $status = $_POST['status'];
 
     // Insert data into the database
-    $result = addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
+    $result = addCrimeInfo($fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
 
     if ($result === "Crime Information added successfully.") {
         header("Location: ../admin/crime-info.php");
@@ -49,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     // Retrieve form data
     $crime_id = $_POST['crime_id'];
-    $email = $_POST['email'];
-
+    $fullName = $_POST['fullName'];
+    $phoneNumber = $_POST['phoneNumber'];
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
     $placeOfIncident = $_POST['placeOfIncident']; 
@@ -64,13 +65,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidence/');
 
     // Generate QR code data
-    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData = "Full Name: " . $fullName . "\n";
+    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
     $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
     $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
     $qrCodeData .= "Place: " . $placeOfIncident . "\n";
     $qrCodeData .= "Suspect: " . $suspectName . "\n";
     $qrCodeData .= "Crime Type: " . $crimetype . "\n";
     $qrCodeData .= "Statement: " . $statement . "\n";
+    $qrCodeData .= "status: " . $status . "\n";
+
+    
 
     // Generate QR code image and save it
     $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
@@ -87,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Update crime information
-    $result = updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
+    $result = updateCrimeInfo($crime_id, $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
 
     if ($result) {
         // Update QR code filename in the database
@@ -247,28 +252,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </li>
                     </ul>
                 </nav>
-                <!-- /.sidebar-menu -->
             </div>
-            <!-- /.sidebar -->
         </aside>
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
                             <h1 class="m-0">Crime Information</h1>
-                        </div><!-- /.col -->
+                        </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
                                 <li class="breadcrumb-item active">Crime Information</li>
                             </ol>
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-sm-12">
@@ -307,7 +309,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <!-- Default box -->
                             <div class="card shadow card-outline card-primary">
                                 <div class="card-body">
                                     <!-- ADD NEW-->
@@ -316,8 +317,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <button type="button" class="btn btn-primary btn-sm float-left"
                                                 data-toggle="modal" data-target="#addCrimeInfoModal"><i
                                                     class="las la-plus-circle"></i> Add New Crime Information</button>
-                                            <!-- <button type="button" class="btn btn-success btn-sm float-left"
-                                                style="margin-left:10px;"><i class="las la-print"></i> Print</button> -->
                                         </div>
                                         <!-- Add User Modal -->
                                         <div class="modal fade" id="addCrimeInfoModal" tabindex="-1" role="dialog"
@@ -335,9 +334,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     <div class="modal-body">
                                                         <form method="POST" action="" enctype="multipart/form-data">
                                                             <div class="form-group">
-                                                                <label for="email">Email</label>
-                                                                <input type="email" class="form-control" id="email"
-                                                                    placeholder="Enter email" name="email">
+                                                                <label for="fullName">Full Name</label>
+                                                                <input type="text" class="form-control" id="fullName"
+                                                                    placeholder="Enter your Full Name" name="fullName">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="phoneNumber">Mobile No</label>
+                                                                <input type="text" class="form-control" id="phoneNumber"
+                                                                    placeholder="Enter your Full Name" name="phoneNumber">
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="formFileValidID" class="form-label">Upload
@@ -386,7 +390,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                     echo '<option value="" disabled>No crime types found</option>';
                                                                 } else {
                                                                     foreach ($records as $record) {
-                                                                        echo '<option value="' . $record['crimeType'] . '">' . $record['crimeType'] . '</option>';
+                                                                        echo '<option value="' . $record['crimeName'] . '">' . $record['crimeName'] . '</option>';
                                                                     }
                                                                 }
                                                                 ?>
@@ -434,9 +438,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <form id="showRecordsForm" method="GET" action="">
                                                 <div class="form-group">
                                                     <label class="d-flex align-items-center pt-4">
-                                                        <span class="ml-2"><i class="las la-filter"></i>Show </span>
+                                                        <span class="ml-2"><i class="las la-filter"></i>Show &nbsp</span>
                                                         <select class="form-control form-control-sm" id="showRecords"
-                                                            name="showRecords" style="width: 60px; text-align:center;"
+                                                            name="showRecords" style="width: 40px; text-align:center;"
                                                             onchange="this.form.submit()">
                                                             <option value="5" <?php if ($limit==5) echo 'selected' ; ?>
                                                                 >5</option>
@@ -450,9 +454,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                 ?>>50
                                                             </option>
                                                         </select>
-                                                        <span class="ml-2"><i class="las la-filter ps-2"></i> records
+                                                        <span class="ml-2">records
                                                             per
-                                                            page</span>
+                                                            pages</span>
                                                     </label>
                                                 </div>
                                             </form>
@@ -479,15 +483,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <thead>
                                                 <tr>
                                                     <th>QR Codes</th>
-                                                    <th>email</th>
-                                                    <!-- <th>Upload Valid ID</th> -->
+                                                    <th>Full Name</th>
+                                                    <th>Phone Number</th>
                                                     <th>Date and Time of Report</th>
                                                     <th>Date and Time of Incident</th>
                                                     <th>Place of Incident</th>
                                                     <th>Suspect Name</th>
                                                     <th>Type of Crime</th>
                                                     <th>Statement</th>
-                                                    <!-- <th>Upload Evidence</th> -->
                                                     <th>Status</th>
                                                     <th style="text-align:center;">Action</th>
                                                 </tr>
@@ -499,7 +502,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                         <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="70" height="70">
                                                     </td>
                                                     <td>
-                                                        <?php echo $crimeinfo['email']; ?>
+                                                        <?php echo $crimeinfo['fullName']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $crimeinfo['phoneNumber']; ?>
                                                     </td>
                                                     <!-- <td>
                                                             <?php echo $crimeinfo['formFileValidID']; ?>
@@ -530,16 +536,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                                             if ($status == 'Pending') {
                                                                 $badgeClass = 'badge-warning';
-                                                                $textColorClass = 'text-dark'; // Black text color for warning
+                                                                $textColorClass = 'text-dark';
                                                             } elseif ($status == 'UnderInvestigation') {
                                                                 $badgeClass = 'badge-primary';
-                                                                $textColorClass = 'text-light'; // White text color for primary
+                                                                $textColorClass = 'text-light';
                                                             } elseif ($status == 'Confirmed') {
                                                                 $badgeClass = 'badge-success';
-                                                                $textColorClass = 'text-light'; // White text color for success
+                                                                $textColorClass = 'text-light';
                                                             } else {
                                                                 $badgeClass = 'badge-secondary';
-                                                                $textColorClass = 'text-light'; // White text color for secondary
+                                                                $textColorClass = 'text-light';
                                                             }
                                                         ?>
                                                         <span class="badge <?php echo $badgeClass . ' ' . $textColorClass; ?>">
@@ -588,10 +594,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                     <input type="hidden" name="crime_id"
                                                                         value="<?php echo $crimeinfo['crime_id']; ?>">
                                                                     <div class="form-group">
-                                                                        <label for="editEmail">Email</label>
-                                                                        <input type="email" class="form-control"
-                                                                            id="editEmail" name="email"
-                                                                            value="<?php echo $crimeinfo['email']; ?>"
+                                                                        <label for="editFullName">Full Name</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="editFullName" name="fullName"
+                                                                            value="<?php echo $crimeinfo['fullName']; ?>"
+                                                                            required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="editPhoneNumber">Phone Number</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="editPhoneNumber" name="phoneNumber"
+                                                                            value="<?php echo $crimeinfo['phoneNumber']; ?>"
                                                                             required>
                                                                     </div>
                                                                     <div class="form-group">
@@ -666,7 +679,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                                 echo '<option value="" disabled>No crime types found</option>';
                                                                             } else {
                                                                                 foreach ($records as $record) {
-                                                                                    echo '<option value="' . $record['crimeType'] . '">' . $record['crimeType'] . '</option>';
+                                                                                    echo '<option value="' . $record['crimeName'] . '">' . $record['crimeName'] . '</option>';
                                                                                 }
                                                                             }
                                                                             ?>
@@ -734,67 +747,84 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     </div>
                                                 </div>
                                                 <!-- View Crime Information Modal -->
-                                                <div class="modal fade" id="viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>" tabindex="-1" role="dialog" aria-labelledby="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <img src="../dist/img/sanluislogo.png" alt="Left Logo" class="logo">
-                                                                <h5 class="modal-title" id="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>">
-                                                                    View Crime Information
-                                                                </h5>
-                                                                <img src="../dist/img/pnp.png" alt="QR Code" class="logo">
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="form-group">
-                                                                    <label>Email:</label>
-                                                                    <p><?php echo $crimeinfo['email']; ?></p>
+                                                <div class="modal fade" 
+                                                id="viewCrimeInfoModal<?php echo $crimeinfo['crime_id']; ?>" 
+                                                tabindex="-1" role="dialog" 
+                                                aria-labelledby="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="viewCrimeInfoModalLabel<?php echo $crimeinfo['crime_id']; ?>">
+                                                                        View Crime Information
+                                                                    </h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
                                                                 </div>
-                                                                <div class="form-group">
-                                                                    <label>Date and Time of Report:</label>
-                                                                    <p><?php echo $crimeinfo['dateTimeOfReport']; ?></p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Date and Time of Incident:</label>
-                                                                    <p><?php echo $crimeinfo['dateTimeOfIncident']; ?></p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Place of Incident:</label>
-                                                                    <p><?php echo $crimeinfo['placeOfIncident']; ?></p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Suspect Name:</label>
-                                                                    <p><?php echo $crimeinfo['suspectName']; ?></p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Type of Crime:</label>
-                                                                    <p><?php echo $crimeinfo['CrimeType']; ?></p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Statement:</label>
-                                                                    <textarea class="form-control" rows="6" readonly><?php echo $crimeinfo['statement']; ?></textarea>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Valid ID:</label><br>
-                                                                    <img src="<?php echo '../dist/uploads/valid_ids/' . $crimeinfo['formFileValidID']; ?>" alt="QR Code" width="120" height="120">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Evidences:</label><br>
-                                                                    <img src="<?php echo '../dist/uploads/evidences/' . $crimeinfo['formFileEvidence']; ?>" alt="QR Code" width="120" height="120">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Status:</label>
-                                                                    <p><?php echo $crimeinfo['status']; ?></p>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>QR Code:</label><br>
-                                                                    <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="120" height="120">
-                                                                </div>
+                                                                <div id="printable-modal-body<?php echo $crimeinfo['crime_id']; ?>" class="modal-body">
+                                                                    <div class="container">
+                                                                        <div class="left">
+                                                                            <!-- Move information to left -->
+                                                                            <div class="form-group">
+                                                                                <label>Full Name:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['fullName']; ?></p>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Phone Number:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['phoneNumber']; ?></p>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Place of Incident:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['placeOfIncident']; ?></p>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Suspect Name:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['suspectName']; ?></p>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Status:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['status']; ?></p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="middle">
+                                                                            <!-- Move information to middle -->
+                                                                            <div class="form-group">
+                                                                                <label>Date and Time of Report:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['dateTimeOfReport']; ?></p>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Date and Time of Incident:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['dateTimeOfIncident']; ?></p>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Type of Crime:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['CrimeType']; ?></p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="right">
+                                                                            <!-- Move QR code to right -->
+                                                                            <div class="form-group">
+                                                                                <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="150" height="150">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group px-4">
+                                                                        <label>Valid ID:</label><br>
+                                                                        <img src="<?php echo '../dist/uploads/valid_ids/' . $crimeinfo['formFileValidID']; ?>" alt="QR Code" style="max-width: 100%; height: 120px;">
+                                                                    </div>
+
+                                                                    <div class="form-group px-4">
+                                                                        <label>Evidences:</label><br>
+                                                                        <img src="<?php echo '../dist/uploads/evidences/' . $crimeinfo['formFileEvidence']; ?>" alt="QR Code" style="max-width: 100%; height: 120px;">
+                                                                    </div>
+                                                                    <div class="form-group px-4">
+                                                                        <label>Statement:</label>
+                                                                        <textarea class="form-control" rows="6" readonly><?php echo $crimeinfo['statement']; ?></textarea>
+                                                                    </div>
                                                                 <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                    <button type="button" class="btn btn-primary" onclick="printModalContent()">Print</button>
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                        <button type="button" class="btn btn-primary" onclick="printModal('<?php echo $crimeinfo['crime_id']; ?>')">Print</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -863,26 +893,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     </div>
                                 </div>
                             </div>
-                            <!-- /.card -->
                         </div>
-                        <!-- ./col -->
                     </div>
-                    <!-- /.row -->
-                </div><!-- /.container-fluid -->
+                </div>
             </div>
-            <!-- /.content -->
         </div>
-        <!-- /.content-wrapper -->
 
-        <!-- Main Footer -->
         <footer class="main-footer text-center">
-            <!-- Default to the left -->
             <strong>Copyright &copy; 2023. BROSOTO DEV </strong> All rights reserved.
         </footer>
     </div>
-    <!-- ./wrapper -->
-
-    <!-- REQUIRED SCRIPTS -->
 
     <!-- jQuery -->
     <script src="../plugins/jquery/jquery.min.js"></script>

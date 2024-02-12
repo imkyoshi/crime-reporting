@@ -4,8 +4,8 @@ session_start();
 
 // Check if the user is not logged in or not an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['roles'] !== 'officer') {
-    header("Location: ../auth/login.php");
-    exit;
+  header("Location: ../auth/login.php");
+  exit;
 }
 
 // Include database connection and functions files
@@ -21,21 +21,24 @@ $records = retrieveRecords();
 // Handle form submission for adding a Crime Information
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
     // Retrieve form data
-    $email = $_POST['email'];
+    $fullName = $_POST['fullName'];
+    $phoneNumber = $_POST['phoneNumber'];
+    $formFileValidID  = handleFileUpload('formFileValidID', __DIR__ 
+    . DIRECTORY_SEPARATOR . 'dist' 
+    . DIRECTORY_SEPARATOR . 'uploads' 
+    . DIRECTORY_SEPARATOR . 'valid_ids' 
+    . DIRECTORY_SEPARATOR);
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
     $placeOfIncident = $_POST['placeOfIncident']; 
     $suspectName = $_POST['suspectName'];
     $crimetype = $_POST['crimetype'];
     $statement = $_POST['statement'];
+    $formFileEvidence = handleFileUpload('formFileEvidence', __DIR__ . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'evidences' . DIRECTORY_SEPARATOR);
     $status = $_POST['status'];
 
-    // Handle file uploads
-    $formFileValidID = handleFileUpload('formFileValidID', '../dist/uploads/valid_ids/');
-    $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidences/');
-
     // Insert data into the database
-    $result = addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
+    $result = addCrimeInfo($fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
 
     if ($result === "Crime Information added successfully.") {
         header("Location: ../admin/crime-info.php");
@@ -51,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     // Retrieve form data
     $crime_id = $_POST['crime_id'];
-    $email = $_POST['email'];
-
+    $fullName = $_POST['fullName'];
+    $phoneNumber = $_POST['phoneNumber'];
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
     $placeOfIncident = $_POST['placeOfIncident']; 
@@ -62,11 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     $status = $_POST['status'];
 
     // Handle file uploads
-    $formFileValidID = handleFileUpload('formFileValidID', '../dist/uploads/valid_ids/');
-    $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidences/');
+    $formFileValidID = handleFileUpload('formFileValidID', '../dist/uploads/valid_id/');
+    $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidence/');
 
     // Generate QR code data
-    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData = "Full Name: " . $fullName . "\n";
+    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
     $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
     $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
     $qrCodeData .= "Place: " . $placeOfIncident . "\n";
@@ -74,6 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     $qrCodeData .= "Crime Type: " . $crimetype . "\n";
     $qrCodeData .= "Statement: " . $statement . "\n";
     $qrCodeData .= "status: " . $status . "\n";
+
+    
 
     // Generate QR code image and save it
     $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
@@ -90,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Update crime information
-    $result = updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
+    $result = updateCrimeInfo($crime_id, $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status);
 
     if ($result) {
         // Update QR code filename in the database
@@ -131,6 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
         $crimeinfos = getCrimeInfoWithSearchLimitAndOffset($search, $limit, $startIndex);
     }
 }
+
+
+
 ?>
 <!DOCTYPE html>
 <!--
@@ -377,9 +386,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                     <div class="modal-body">
                                                         <form method="POST" action="" enctype="multipart/form-data">
                                                             <div class="form-group">
-                                                                <label for="email">Email</label>
-                                                                <input type="email" class="form-control" id="email"
-                                                                    placeholder="Enter email" name="email">
+                                                                <label for="fullName">Full Name</label>
+                                                                <input type="text" class="form-control" id="fullName"
+                                                                    placeholder="Enter your Full Name" name="fullName">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="phoneNumber">Mobile No</label>
+                                                                <input type="text" class="form-control" id="phoneNumber"
+                                                                    placeholder="Enter your Full Name" name="phoneNumber">
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="formFileValidID" class="form-label">Upload
@@ -521,15 +535,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             <thead>
                                                 <tr>
                                                     <th>QR Codes</th>
-                                                    <th>email</th>
-                                                    <!-- <th>Upload Valid ID</th> -->
+                                                    <th>Full Name</th>
+                                                    <th>Phone Number</th>
                                                     <th>Date and Time of Report</th>
                                                     <th>Date and Time of Incident</th>
                                                     <th>Place of Incident</th>
                                                     <th>Suspect Name</th>
                                                     <th>Type of Crime</th>
                                                     <th>Statement</th>
-                                                    <!-- <th>Upload Evidence</th> -->
                                                     <th id="status">Status</th>
                                                     <th id="actionss" style="text-align:center;">Action</th>
                                                 </tr>
@@ -541,7 +554,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                         <img src="<?php echo '../dist/qrcodes/' . $crimeinfo['qrcode']; ?>" alt="QR Code" width="70" height="70">
                                                     </td>
                                                     <td>
-                                                        <?php echo $crimeinfo['email']; ?>
+                                                        <?php echo $crimeinfo['fullName']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $crimeinfo['phoneNumber']; ?>
                                                     </td>
                                                     <!-- <td>
                                                             <?php echo $crimeinfo['formFileValidID']; ?>
@@ -624,11 +640,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                     enctype="multipart/form-data">
                                                                     <input type="hidden" name="crime_id"
                                                                         value="<?php echo $crimeinfo['crime_id']; ?>">
+                                                                        <div class="form-group">
+                                                                        <label for="editFullName">Full Name</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="editFullName" name="fullName"
+                                                                            value="<?php echo $crimeinfo['fullName']; ?>"
+                                                                            required>
+                                                                    </div>
                                                                     <div class="form-group">
-                                                                        <label for="editEmail">Email</label>
-                                                                        <input type="email" class="form-control"
-                                                                            id="editEmail" name="email"
-                                                                            value="<?php echo $crimeinfo['email']; ?>"
+                                                                        <label for="editPhoneNumber">Phone Number</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="editPhoneNumber" name="phoneNumber"
+                                                                            value="<?php echo $crimeinfo['phoneNumber']; ?>"
                                                                             required>
                                                                     </div>
                                                                     <div class="form-group">
@@ -702,7 +725,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                                 echo '<option value="" disabled>No crime types found</option>';
                                                                             } else {
                                                                                 foreach ($records as $record) {
-                                                                                    echo '<option value="' . $record['crimeType'] . '">' . $record['crimeType'] . '</option>';
+                                                                                    echo '<option value="' . $record['crimeName'] . '">' . $record['crimeName'] . '</option>';
                                                                                 }
                                                                             }
                                                                             ?>
@@ -789,8 +812,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                         <div class="left">
                                                                             <!-- Move information to left -->
                                                                             <div class="form-group">
-                                                                                <label>Email:</label>
-                                                                                <p style="display: inline;"><?php echo $crimeinfo['email']; ?></p>
+                                                                                <label>Full Name:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['fullName']; ?></p>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Mobile No:</label>
+                                                                                <p style="display: inline;"><?php echo $crimeinfo['phoneNumber']; ?></p>
                                                                             </div>
                                                                             <div class="form-group">
                                                                                 <label>Place of Incident:</label>

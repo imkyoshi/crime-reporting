@@ -4,8 +4,8 @@ session_start();
 
 // Check if the user is not logged in or not an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['roles'] !== 'officer') {
-  header("Location: ../auth/login.php");
-  exit;
+    header("Location: ../auth/login.php");
+    exit;
 }
 
 // Include database connection and functions files
@@ -15,7 +15,7 @@ require_once '../includes/functions.php';
 
 // Retrieve all users from the database
 $users = getAllUsers();
-
+$recentCrimeInfo =  getRecentCrimeInfo();
 $currentUserID = $_SESSION['user_id'];
 $currentUserInfo = getUserById($currentUserID);
 $totalResidents = getTotalResidentCount();
@@ -45,7 +45,6 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
 
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-            <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="las la-bars"></i></a>
@@ -53,11 +52,9 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
             </ul>
             </ul>
         </nav>
-        <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color:#0B2436;">
-            <!-- Brand Logo -->
             <a href="index3.html" class="brand-link">
                 <img src="../dist/img/PNP.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                     style="opacity: .8">
@@ -66,7 +63,6 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
 
             <!-- Sidebar -->
             <div class="sidebar">
-                <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="info text-light">
                         Welcome
@@ -80,8 +76,6 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
-                        <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
                         <li class="nav-item">
                             <a href="../officer/dashboard.php" class="nav-link">
                                 <i class="las la-home" id="icon"></i>
@@ -114,6 +108,30 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                                 </p>
                             </a>
                         </li>
+                        <!-- <li class="nav-item">
+                            <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-search"></i>
+                            <p>
+                                STATUS
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                            </a>
+                            <ul class="nav nav-treeview" style="display: none;">
+                            <li class="nav-item">
+                                <a href="../search/simple.html" class="nav-link">
+                                <i class="las la-archive" id="icon"></i>
+                                <p>View Confirmed Status</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../search/enhanced.html" class="nav-link">
+                                <i class="las la-archive" id="icon"></i>
+                                <p>View Underinvenstigate</p>
+                                </a>
+                            </li>
+                            </ul>
+                        </li> -->
+                        
                         <li class="nav-item">
                             <a href="../auth/logout.php" class="nav-link">
                                 <i class="las la-sign-out-alt" id="icon"></i>
@@ -124,38 +142,32 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                         </li>
                     </ul>
                 </nav>
-                <!-- /.sidebar-menu -->
             </div>
-            <!-- /.sidebar -->
         </aside>
 
-        <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
                             <h1 class="m-0">Dashboard</h1>
-                        </div><!-- /.col -->
+                        </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                                 <li class="breadcrumb-item active">Dashboard</li>
                             </ol>
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- /.content-header -->
+
 
             <!-- Main content -->
             <div class="content">
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- ./col -->
                         <div class="col-lg-4 col-4">
-                            <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
                                     <h3><?php echo $totalCrimeinfo; ?></h3>
@@ -167,7 +179,6 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                             </div>
                         </div>
                         <div class="col-lg-4 col-4">
-                            <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
                                     <h3><?php echo $totalSuspectInfo; ?></h3>
@@ -178,9 +189,7 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                                 </div>
                             </div>
                         </div>
-                        <!-- ./col -->
                         <div class="col-lg-4 col-4">
-                            <!-- small box -->
                             <div class="small-box bg-navy">
                                 <div class="inner">
                                     <h3><?php echo $totalResidents; ?></h3>
@@ -192,8 +201,69 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                             </div>
                         </div>
 
+                        <!-- <div class="col-md-12">
+                            <div class="card card-outline card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Recent Crime Report</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="las la-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="recentCrimeInfoTable" class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Full Name</th>
+                                                    <th>Date and Time of Report</th>
+                                                    <th>Place of Incident</th>
+                                                    <th>Date and Time of Incident</th>
+                                                    <th>Type of Crime</th>
+                                                    <th>Status</th>
+                                                    <th>Date Created</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                // Loop through each recent crime information record
+                                                foreach ($recentCrimeInfo as $crime) {
+                                                    ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $crime['fullName']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $crime['dateTimeOfReport']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $crime['dateTimeOfIncident']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $crime['placeOfIncident']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $crime['CrimeType']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $crime['status']; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $crime['dateCreated']; ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+
                         <div class="col-12">
-                            <!-- Default box -->
                             <div class="card card-outline card-primary">
                                 <div class="card-body">
                                     <h3> Welcome to Dashboard</h3>
@@ -212,39 +282,24 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
                                         priority, and we are here for you 24/7."
                                     </p>
                                 </div>
-                                <!-- /.card-body -->
-
                             </div>
-                            <!-- /.card -->
                         </div>
-                        <!-- ./col -->
                     </div>
-                    <!-- /.row -->
-                </div><!-- /.container-fluid -->
+                </div>
             </div>
-            <!-- /.content -->
         </div>
-        <!-- /.content-wrapper -->
 
-        <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
             <div class="p-3">
                 <h5>Title</h5>
                 <p>Sidebar content</p>
             </div>
         </aside>
-        <!-- /.control-sidebar -->
-
-        <!-- Main Footer -->
         <footer class="main-footer text-center">
-            <!-- Default to the left -->
             <strong>Copyright &copy; 2023. BROSOTO DEV </strong> All rights reserved.
         </footer>
     </div>
-    <!-- ./wrapper -->
 
-    <!-- REQUIRED SCRIPTS -->
 
     <!-- jQuery -->
     <script src="../plugins/jquery/jquery.min.js"></script>
@@ -260,8 +315,4 @@ $totalCrimeinfo = getTotalCrimeInfoCount();
     <script src="../dist/js/charts.js"></script>
     <script src="../dist/js/inspect.js"></script>
 </body>
-
-</html>
-</body>
-
 </html>

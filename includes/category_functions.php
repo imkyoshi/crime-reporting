@@ -34,13 +34,13 @@ function getAllcategory()
 }
 
 // Add a new Category to the database
-function addCategory($CrimeType, $description)
+function addCategory($crimeName, $description, $crimeType)
 {
     global $mysqli;
 
     // Check if the category already exists
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_category WHERE CrimeType = ?");
-    $stmt->bind_param("s", $CrimeType);
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_category WHERE crimeName = ?");
+    $stmt->bind_param("s", $crimeName);
     $stmt->execute();
     $stmt->bind_result($count);
     $stmt->fetch();
@@ -51,8 +51,8 @@ function addCategory($CrimeType, $description)
         return "Category with this name already exists.";
     }
 
-    $stmt = $mysqli->prepare("INSERT INTO crime_category (CrimeType, description) VALUES (?, ?)");
-    $stmt->bind_param("ss", $CrimeType, $description);
+    $stmt = $mysqli->prepare("INSERT INTO crime_category (crimeName, description, crimeType) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $crimeName, $description, $crimeType);
     $result = $stmt->execute();
     $stmt->close();
 
@@ -66,14 +66,14 @@ function addCategory($CrimeType, $description)
 
 
 // Update an existing Category in the database
-function updateCategory($categoryID, $CrimeType, $description)
+function updateCategory($categoryID, $crimeName, $description, $crimeType)
 {
     global $mysqli;
 
-    $sql = "UPDATE crime_category SET CrimeType=?, description=?
+    $sql = "UPDATE crime_category SET crimeName=?, description=?, crimeType=?
             WHERE categoryID=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ssi", $CrimeType, $description, $categoryID);
+    $stmt->bind_param("sssi", $crimeName, $description, $crimeType, $categoryID);
     $result = $stmt->execute();
 
     return $result;
@@ -123,7 +123,7 @@ function getcategoryWithSearchLimitAndOffset($search, $limit, $offset)
     global $mysqli;
 
     $search = "%" . $search . "%";
-    $sql = "SELECT * FROM crime_category WHERE CrimeType LIKE ? OR description LIKE ? LIMIT ? OFFSET ?";
+    $sql = "SELECT * FROM crime_category WHERE crimeName LIKE ? OR crimeType LIKE ? LIMIT ? OFFSET ?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("ssii", $search, $search, $limit, $offset);
     $stmt->execute();

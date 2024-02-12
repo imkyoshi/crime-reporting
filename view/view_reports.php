@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                 <div class="col-sm-9" style="margin-top: 15px;">
                                     <form id="showRecordsForm" method="GET" action="">
                                         <div class="form-group">
-                                            <label class="d-flex align-items-center pt-4">
+                                            <label class="d-flex align-items-center">
                                                 <span class="ml-2"><i class="las la-filter"></i>Show </span>
                                                 <select class="form-control form-control-sm" id="showRecords"
                                                     name="showRecords" style="width: 60px; text-align:center;" onchange="this.form.submit()">
@@ -173,11 +173,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                     <div class="form-inline">
                                         <form id="searchForm" method="GET" action="">
                                             <div class="form-group mx-sm-3 mb-2 ps-5">
-                                                <label for="searchInput" class="mr-2"><i class="las la-search"></i>
-                                                    Search:</label>
+                                                <label for="searchInput" class="d-flex align-items-center mr-2"><i class="las la-search"></i>
+                                                <span class="ml-2"><i class="las la-filter"></i>Search:</span>&nbsp;
                                                 <input type="text" class="form-control" id="searchInput" name="search"
                                                     style="max-width: 200px;"
                                                     value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                                                
+                                                </label>
                                             </div>
                                         </form>
                                     </div>
@@ -189,10 +191,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                     <thead>
                                         <tr>
                                             <th>QR Codes</th>
+                                            <th>Full Name</th>
                                             <th>Date and Time of Report</th>
-                                            <th>Date and Time of Incident</th>
                                             <th>Place of Incident</th>
-                                            <th>Suspect Name</th>
+                                            <th>Date and Time of Incident</th>
                                             <th>Type of Crime</th>
                                             <th>Status</th>
                                         </tr>
@@ -204,16 +206,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                                     <img src="<?php echo '../dist/qrcodes/' . htmlspecialchars($crimeinfo['qrcode']); ?>" alt="QR Code" width="60" height="60">
                                                 </td>
                                                 <td>
-                                                    <?php echo htmlspecialchars($crimeinfo['dateTimeOfReport']); ?>
+                                                    <?php echo htmlspecialchars($crimeinfo['fullName']); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo htmlspecialchars($crimeinfo['dateTimeOfIncident']); ?>
+                                                    <?php echo htmlspecialchars($crimeinfo['dateTimeOfReport']); ?>
                                                 </td>
                                                 <td>
                                                     <?php echo htmlspecialchars($crimeinfo['placeOfIncident']); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo htmlspecialchars($crimeinfo['suspectName']); ?>
+                                                    <?php echo htmlspecialchars($crimeinfo['dateTimeOfIncident']); ?>
                                                 </td>
                                                 <td>
                                                     <?php echo htmlspecialchars($crimeinfo['CrimeType']); ?>

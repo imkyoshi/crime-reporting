@@ -571,6 +571,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                         value="<?php echo $resident['email']; ?>"
                                                                         readonly>
                                                                 </div>
+                                                                <div class="form-group">
+                                                                        <label>QR Code:</label><br>
+                                                                        <img src="<?php echo '../dist/qrcodes/' . $suspectinfo['qrcode']; ?>" alt="QR Code" style="max-width: 100%; height: 150px;" class="mx-auto my-auto d-block">
+                                                                    </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary"
                                                                         data-dismiss="modal">Close</button>

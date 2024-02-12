@@ -56,22 +56,27 @@ $donutChartData = getDonutChartData();
 
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="las la-bars"></i></a>
                 </li>
             </ul>
         </nav>
+        <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color:#0B2436;">
+            <!-- Brand Logo -->
             <a href="index3.html" class="brand-link">
                 <img src="../dist/img/PNP.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                     style="opacity: .8">
                 <span class="brand-text font-weight-light">San Luis Police Station</span>
             </a>
 
+            <!-- Sidebar -->
             <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="info text-light">
                         Welcome
@@ -85,15 +90,8 @@ $donutChartData = getDonutChartData();
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                         data-accordion="false">
-                        <!-- <li class="nav-item">
-                            <a href="adminprofile.php" class="nav-link">
-                                <i class="las la-home" id="icon"></i>
-                                <p>
-                                    My Profile
-                                </p>
-                            </a>
-                        </li> -->
-                        <li class="nav-item"></li>
+                        <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+                        <li class="nav-item">
                             <a href="dashboard.php" class="nav-link">
                                 <i class="las la-home" id="icon"></i>
                                 <p>
@@ -143,133 +141,96 @@ $donutChartData = getDonutChartData();
                         </li>
                     </ul>
                 </nav>
+                <!-- /.sidebar-menu -->
             </div>
+            <!-- /.sidebar -->
         </aside>
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Dashboard</h1>
-                        </div>
+                            <h1 class="m-0">Account Profile</h1>
+                        </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Dashboard</li>
+                                <li class="breadcrumb-item active">Account Profile</li>
                             </ol>
-                        </div>
-                    </div>
-                </div>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div><!-- /.container-fluid -->
             </div>
+            <!-- /.content-header -->
 
             <!-- Main content -->
             <div class="content">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-navy">
-                                <div class="inner">
-                                    <h3><?= $totalUsers; ?></h3>
-                                    <p>Total Users</p>
-                                </div>
-                                <div class="icon" id="icon">
-                                    <i class="las la-user-friends"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-navy">
-                                <div class="inner">
-                                    <h3><?= $totalCrimeCategories; ?></h3>
-                                    <p>Crime Categories</p>
-                                </div>
-                                <div class="icon" id="icon">
-                                    <i class="las la-layer-group"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-navy">
-                                <div class="inner">
-                                    <h3><?= $totalCrimeinfo; ?></h3>
-                                    <p>Crime Info</p>
-                                </div>
-                                <div class="icon" id="icon">
-                                    <i class="las la-gavel"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                            <div class="small-box bg-navy">
-                                <div class="inner">
-                                    <h3><?= $totalResidents; ?></h3>
-                                    <p>Resident Info</p>
-                                </div>
-                                <div class="icon" id="icon">
-                                    <i class="las la-archive"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-8">
-                            <!-- BARCHART -->
-                            <div class="card card-outline card-primary">
-                                <div class="card-header">
-                                    <h3 class="card-title">Crime Reports</h3>
-
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                            <i class="las la-minus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart">
-                                        <canvas id="barChart"
-                                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- DONUT CHART-->
-                        <div class="col-md-4">
-                            <div class="card card-outline card-primary">
-                                <div class="card-header">
-                                    <h3 class="card-title">Crime Report Overview</h3>
-
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                            <i class="las la-minus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="donutChart"
-                                        style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <!-- Default box -->
                             <div class="card card-outline card-primary">
+                                <div class="card-header"> 
+                                <div class="row">
+                                        <div class="col-md-2">
+                                            <h4 class="card-title pt-2">My Account</h4>
+                                        </div>
+                                        <div class="col-md-10 text-right">
+                                            <button type="submit" class="btn btn-success">Update Account</button>
+                                        </div>
+                                    </div>  
+                                </div>
                                 <div class="card-body">
-                                    <h3>Welcome to the Dashboard</h3>
-                                    <p class="text-xl-start text-secondary">
-                                        At the San Luis Municipality Police Station, our mission is to serve and protect
-                                        our vibrant community with unwavering dedication and integrity. With a team of
-                                        highly trained officers and staff, we are committed to ensuring the safety and
-                                        security of all residents and visitors.
-                                    </p>
-                                    <p class="text-xl-start text-secondary">
-                                        We work tirelessly to build strong relationships with the people we serve,
-                                        fostering trust and cooperation. Together, we strive for a safer, more
-                                        harmonious San Luis, where everyone can thrive. Your safety is our top
-                                        priority, and we are here for you 24/7.
-                                    </p>
+                                    <form method="POST" action="">
+                                        <div class="form-group">
+                                            <label for="email">Email</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Password</label>
+                                            <input type="password" class="form-control" id="password" name="password" required>
+                                        </div>
+                                    </form>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <!-- Default box -->
+                            <div class="card card-outline card-primary">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <h4 class="card-title pt-2">Personal Information</h4>
+                                        </div>
+                                        <div class="col-md-10 text-right">
+                                            <button type="submit" class="btn btn-success">Update Personal Information</button>
+                                        </div>
+                                    </div>    
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="fullName">Full Name</label>
+                                        <input type="text" class="form-control" id="fullName" name="fullName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phoneNumber">Phone Number</label>
+                                        <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address">Addresss</label>
+                                        <input type="text" class="form-control" id="address" name="address" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dateOfBirth">Date of Birth</label>
+                                        <input type="date" class="form-control" id="dateOfBirth"
+                                            name="dateOfBirth" required>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -278,19 +239,22 @@ $donutChartData = getDonutChartData();
             </div>
         </div>
 
-        <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
+
             <div class="p-3">
                 <h5>Title</h5>
                 <p>Sidebar content</p>
             </div>
         </aside>
 
+
         <!-- Main Footer -->
         <footer class="main-footer text-center">
             <strong>Copyright &copy; 2023. BROSOTO DEV </strong> All rights reserved.
         </footer>
     </div>
+
+    <!-- REQUIRED SCRIPTS -->
 
     <!-- jQuery -->
     <script>

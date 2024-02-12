@@ -2,6 +2,23 @@
 // Include database connections
 require_once 'db.php';
 
+
+
+function getRecentCrimeInfo($limit = 10) {
+    global $mysqli;
+
+    $stmt = $mysqli->prepare("SELECT *, DATE(dateCreated) AS date_created FROM crime_information ORDER BY dateCreated DESC LIMIT ?");
+    $stmt->bind_param("i", $limit);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $recentCrimeInfo = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    return $recentCrimeInfo;
+}
+
+
+
 // Function to fetch data for the donut chart
 function getMonthlyCrimeCounts() {
     global $mysqli;
@@ -35,8 +52,6 @@ function getMonthlyCrimeCounts() {
     return array('data' => $data, 'months' => $months, 'years' => $years);
 }
 
-
-
 // Function to fetch data for the donut chart
 function getDonutChartData() {
     global $mysqli;
@@ -54,12 +69,12 @@ function getDonutChartData() {
 }
 
 // Function to authenticate user
-function authenticateUser($username, $password)
+function authenticateUser($email, $password)
 {
     global $mysqli;
 
-    $stmt = $mysqli->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
-    $stmt->bind_param("s", $username);
+    $stmt = $mysqli->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
+    $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
@@ -72,35 +87,30 @@ function authenticateUser($username, $password)
 }
 
 // Register a new user with the specified username, password, and email
-function registerUser($username, $password, $email)
+function registerUser($fullName, $phoneNumber, $address, $dateOfBirth, $email, $password)
 {
     global $mysqli;
 
-    // Check if the username or email already exists
-    $query = "SELECT * FROM users WHERE username = ? OR email = ?";
+    // Check if the email or fullname already exists
+    $query = "SELECT * FROM users WHERE email = ? OR fullname = ?";
     $stmt = $mysqli->prepare($query);
-    $stmt->bind_param("ss", $username, $email);
+    $stmt->bind_param("ss", $fullName, $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        return false; // Username or email already exists
+        return false; 
     }
 
     // Insert the new user into the database with user role set as "user"
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    $query = "INSERT INTO users (username, password, email, roles) VALUES (?, ?, ?, 'user')";
+    $query = "INSERT INTO users (fullName, phoneNumber, address, dateOfBirth, email, password, roles) VALUES (?, ?, ?, ?, ?, ?, 'user')";
     $stmt = $mysqli->prepare($query);
-    $stmt->bind_param("sss", $username, $hashedPassword, $email);
+    $stmt->bind_param("ssssss", $fullName, $phoneNumber, $address, $dateOfBirth, $email, $hashedPassword);
     $stmt->execute();
 
     return true; // Registration successful
 }
-
-
-
-
-
 
 // Function to retrieve a user by username or email
 function getUserByUsernameOrEmail($username, $email)
@@ -147,28 +157,26 @@ function getAllUsers()
 }
 
 // Function to add a new user
-function addUser($username, $password, $email, $roles)
+function addUser($fullName, $phoneNumber, $address, $dateOfBirth, $email, $password,  $roles)
 {
     global $mysqli;
 
-    // Check if the user already exists
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
+    // Check if the email or fullname already exists
+    $query = "SELECT * FROM users WHERE email = ? OR fullname = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param("ss", $fullName, $email);
     $stmt->execute();
-    $stmt->bind_result($count);
-    $stmt->fetch();
-    $stmt->close();
+    $result = $stmt->get_result();
 
-    if ($count > 0) {
-        // User with the same username already exists
-        return "User with this username already exists.";
+    if ($result->num_rows > 0) {
+        return false; // Username or email already exists
     }
 
     // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $mysqli->prepare("INSERT INTO users (username, password, email, roles) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $username, $hashedPassword, $email, $roles);
+    $stmt = $mysqli->prepare("INSERT INTO users (fullName, phoneNumber, address, dateOfBirth, email, password, roles) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssss", $fullName, $phoneNumber, $address, $dateOfBirth, $email, $hashedPassword, $roles);
     $success = $stmt->execute();
     $stmt->close();
 
@@ -179,17 +187,16 @@ function addUser($username, $password, $email, $roles)
     }
 }
 
-
 // Function to update an existing user
-function updateUser($userId, $username, $password, $email, $roles)
+function updateUser($userId, $fullName, $phoneNumber, $address, $dateOfBirth, $email, $password, $roles)
 {
     global $mysqli;
 
     // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $mysqli->prepare("UPDATE users SET username = ?, password = ?, email = ?, roles = ? WHERE id = ?");
-    $stmt->bind_param("ssssi", $username, $hashedPassword, $email, $roles, $userId);
+    $stmt = $mysqli->prepare("UPDATE users SET fullName = ?, phoneNumber = ?, address = ?, dateOfBirth = ?,  email = ?, password = ?,roles = ? WHERE id = ?");
+    $stmt->bind_param("sssssssi", $fullName, $phoneNumber, $address, $dateOfBirth, $email, $hashedPassword, $roles, $userId);
     $success = $stmt->execute();
     $stmt->close();
 
@@ -234,7 +241,7 @@ function getUsersWithSearch($search)
 {
     global $mysqli;
 
-    $stmt = $mysqli->prepare("SELECT * FROM users WHERE username LIKE CONCAT('%', ?, '%') OR email LIKE CONCAT('%', ?, '%')");
+    $stmt = $mysqli->prepare("SELECT * FROM users WHERE fullName LIKE CONCAT('%', ?, '%') OR email LIKE CONCAT('%', ?, '%')");
     $stmt->bind_param("ss", $search, $search);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -259,7 +266,6 @@ function getTotalUserCount()
 
     return 0;
 }
-
 
 function getTotalCrimeCategoryCount()
 {
@@ -362,8 +368,4 @@ function getStatusEntries($startIndex, $showRecords)
     $status = "Showing {$startIndex} to {$endIndex} of {$totalEntries} entries";
     return $status;
 }
-
-
-
-
 ?>

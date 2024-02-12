@@ -330,36 +330,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                                                 </div>
                                             </div>
                                         </div>
-
                                         <!-- SHOW RECORDS -->
                                         <div class="col-sm-3" style="margin-top: 15px;">
-                                            <form id="showRecordsForm" method="GET" action="">
-                                                <div class="form-group">
-                                                    <label class="d-flex align-items-center">
-                                                        <select class="form-control form-control-sm" id="showRecords"
-                                                            name="showRecords" style="width: 120px;"
-                                                            onchange="this.form.submit()">
-                                                            <option value="5" <?php if ($limit == 5)
-                                                            echo 'selected'; ?>
-                                                                >5</option>
-                                                            <option value="10" <?php if ($limit == 10)
-                                                            echo 'selected';
-                                                            ?>>10
-                                                            </option>
-                                                            <option value="20" <?php if ($limit == 20)
-                                                            echo 'selected';
-                                                            ?>>20
-                                                            </option>
-                                                            <option value="50" <?php if ($limit == 50)
-                                                            echo 'selected';
-                                                            ?>>50
-                                                            </option>
-                                                        </select>
-                                                        <span class="ml-2"><i class="las la-filter"></i> records per
-                                                            page</span>
-                                                    </label>
-                                                </div>
-                                            </form>
+                                        <form id="showRecordsForm" method="GET" action="">
+                                            <div class="form-group">
+                                            <label class="d-flex align-items-center">
+                                            <span class="ml-2"><i class="las la-filter"></i>Show &nbsp</span>
+                                                <select class="form-control form-control-sm" id="showRecords" name="showRecords"
+                                                style="width: 40px; text-align: center;" onchange="this.form.submit()">
+                                                <option value="5" <?php if ($limit == 5)
+                                                    echo 'selected'; ?>>5</option>
+                                                <option value="10" <?php if ($limit == 10)
+                                                    echo 'selected'; ?>>10
+                                                </option>
+                                                <option value="20" <?php if ($limit == 20)
+                                                    echo 'selected'; ?>>20
+                                                </option>
+                                                <option value="50" <?php if ($limit == 50)
+                                                    echo 'selected'; ?>>50
+                                                </option>
+                                                </select>
+                                                <span class="ml-2">records per pages</span>
+                                            </label>
+                                            </div>
+                                        </form>
                                         </div>
                                         <!-- SEARCH -->
                                         <div class="col-sm-9" style="margin-top: 15px;">

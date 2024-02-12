@@ -41,7 +41,8 @@ if (isset($_GET['logout'])) {
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize and validate form data
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $fullName = $_POST['fullName'];
+    $phoneNumber = $_POST['phoneNumber'];
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
     $placeOfIncident = htmlspecialchars($_POST['placeOfIncident']);
@@ -64,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         . DIRECTORY_SEPARATOR);
 
     // Generate QR code data
-    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData = "Full Name: " . $fullName . "\n";
+    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
     $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
     $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
     $qrCodeData .= "Place: " . $placeOfIncident . "\n";
@@ -87,8 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Insert data into the database
-    $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName);
+    $stmt = $mysqli->prepare("INSERT INTO crime_information (fullName, phoneNumber, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssssssss", $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName);
 
     $result = $stmt->execute();
     $stmt->close();
@@ -120,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Mapquest CDN -->
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
+    <!-- Custom CSS -->
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../dist/css/report.css" />
 
@@ -205,12 +208,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     of illegal or false information</p>
                                 <div class="col-md-12">
 
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="email">Email:</label>
-                                            <input type="text" class="form-control" id="email" name="email"
-                                                value="<?php echo $user['email']; ?>" readonly>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="fulName">Full Name:</label>
+                                        <input type="text" class="form-control" id="fullName" name="fullName"
+                                            value="<?php echo $user['fullName']; ?>" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phoneNumber">Mobile No:</label>
+                                        <input type="text" class="form-control" id="phoneNumber" name="phoneNumber"
+                                            value="<?php echo $user['phoneNumber']; ?>" readonly>
                                     </div>
 
                                     <div class="form-group">
@@ -265,9 +271,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="placeOfIncident">Suspect Name:</label>
-                                        <input type="text" class="form-control" id="suspectName" name="suspectName"
-                                            required>
+                                        <label for="placeOfIncident">Suspect Name (optional):</label>
+                                        <input type="text" class="form-control" id="suspectName" name="suspectName">
                                     </div>
                                 </div>
 
@@ -282,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 echo '<option value="" disabled>No crime types found</option>';
                                             } else {
                                                 foreach ($records as $record) {
-                                                    echo '<option value="' . $record['crimeType'] . '">' . $record['crimeType'] . '</option>';
+                                                    echo '<option value="' . $record['crimeName'] . '">' . $record['crimeName'] . '</option>';
                                                 }
                                             }
                                             ?>
@@ -342,7 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
+    <div class="modal fade mt-5" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">

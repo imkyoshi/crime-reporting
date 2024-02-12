@@ -82,23 +82,20 @@ body::before {
 }
 
 #register {
-    background: url("../../dist/img/bg.jpg");
+    background: url("../../dist/img/bg.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 100vh;
+    /* height: auto; */
 }
 
 .card {
     /* card center */
-    margin-top: 120px;
-    margin-bottom: 35px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 200px auto auto auto;
     display: block;
     justify-content: center;
     align-items: center;
-    width: 400px;
+    width: 450px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

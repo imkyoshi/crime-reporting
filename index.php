@@ -1,35 +1,24 @@
 <?php
 session_start();
 
-// Include database connection and functions files
 require_once '../crime-reporting/config/db.php';
 require_once '../crime-reporting/includes/functions.php';
 
-
-
-// Get the user ID from the session
 $user_id = $_SESSION['user_id'];
-
-// Retrieve user information from the database
+// Retrieve User
 $user = getUserById($user_id);
-
 
 // Handle logout request
 if (isset($_GET['logout'])) {
-    // Unset all session variables
     session_unset();
-
-    // Destroy the session
     session_destroy();
-
-    // Redirect to the login page
     header("Location: ../crime-reporting/auth/login.php");
     exit;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<!--divinectorweb.com-->
 
 <head>
     <meta charset="UTF-8">
@@ -118,7 +107,7 @@ if (isset($_GET['logout'])) {
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="dist/img/bg.jpg" class="d-block w-100" alt="...">
+                <img src="dist/img/bg.png" class="d-block w-100" alt="...">
                 <div class="carousel-caption">
                     <h5>Welcome to our <span class="text-warning"> Crime Reporting website </span></h5>
                     <p>We are committed to delivering the highest degree of professional police services in the municipality.</p>
@@ -126,7 +115,7 @@ if (isset($_GET['logout'])) {
                 </div>
             </div>
             <div class="carousel-item">
-                <img src="dist/img/banner1.jpg" class="d-block w-100" alt="...">
+                <img src="dist/img/bg.png" class="d-block w-100" alt="...">
                 <div class="carousel-caption">
                     <h5>Report <span class="text-warning">Now! </span></h5></h5>
                     <p>We are committed to delivering the highest degree of professional police services in the municipality</p>
@@ -177,9 +166,8 @@ if (isset($_GET['logout'])) {
                 </div>
             </div>
         </div>
-    </section>
+    </section>    <!-- about section Ends -->
 
-    <!-- about section Ends -->
     <!-- services section Starts -->
     <section id="services" class="p-5 bg-dark">
         <div class="container">
@@ -254,7 +242,7 @@ if (isset($_GET['logout'])) {
 
     <!-- contact ends -->
     <!-- footer starts -->
-    <footer class="p-5 bg-dark text-white text-center position-relative">
+    <footer class="p-5 bg-dark text-white text-center position-sticky">
         <div class="container">
             <p class="lead">Copyright &copy; 2023 San Luis Municipality Police Station</p>
             <a href="#" class="position-absolute bottom-0 end-0 p-5">

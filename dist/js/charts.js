@@ -10,7 +10,7 @@ function renderDonutChart(data) {
       datasets: [
           {
               data: data.data,
-              backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+              backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de', '#F1C40F', '#9B59B6', '#3F51B5', ' #CDDC39'],
           }
       ]
   };

@@ -18,9 +18,10 @@
     function retrieveRecords() {
         global $mysqli;
     
-        $sql = "SELECT u.email, c.CrimeType
+        $sql = "SELECT u.fullName, u.phoneNumber, c.crimeName
                 FROM users AS u
-                INNER JOIN crime_category AS c ON (u.id = c.categoryID)";     
+                INNER JOIN crime_category AS c ON (u.id = c.categoryID)
+                ORDER BY c.crimeName ASC";     
     
         $result = $mysqli->query($sql);
     
@@ -29,8 +30,9 @@
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $records[] = array(
-                    "email" => $row["email"],
-                    "crimeType" => $row["CrimeType"]
+                    "fullName" => $row["fullName"],
+                    "phoneNuber" => $row["phoneNumber"],
+                    "crimeName" => $row["crimeName"]
                 );
             }
         } else {
@@ -69,24 +71,25 @@
     
 
 // report3_functions.php
-function insertCrimeInformation($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrcode)
+function insertCrimeInformation($fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrcode)
 {
     global $mysqli;
 
-    // Check if crime information with the same suspect name and statement already exists
-    $stmtCheck = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE suspectName = ? AND statement = ?");
-    $stmtCheck->bind_param("ss", $suspectName, $statement);
+    // Check if crime information with the same fullname and phonenumber already exists
+    $stmtCheck = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE fullName = ? AND phoneNumber = ?");
+    $stmtCheck->bind_param("ss", $fullName, $phoneNumber);
     $stmtCheck->execute();
     $stmtCheck->bind_result($count);
     $stmtCheck->fetch();
     $stmtCheck->close();
 
     if ($count > 0) {
-        return "Crime Information with this suspect name and statement already exists.";
+        return "Crime Information with this fullname and mobile no already exists.";
     }
 
     // Generate QR code data
-    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData = "Full Name: " . $fullName . "\n";
+    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
     $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
     $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
     $qrCodeData .= "Place: " . $placeOfIncident . "\n";
@@ -109,8 +112,9 @@ function insertCrimeInformation($email, $formFileValidID, $dateTimeOfReport, $da
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Insert data into the database
-    $stmtInsert = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmtInsert->bind_param("ssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName);
+    $stmtInsert = $mysqli->prepare("INSERT INTO crime_information (fullName, phoneNumber, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmtInsert->bind_param("sssssssssss", $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, 
+    $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName);
 
     $result = $stmtInsert->execute();
     $stmtInsert->close();

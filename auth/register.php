@@ -5,25 +5,29 @@ require_once '../config/db.php';
 require_once '../includes/functions.php';
 
 // Initialize variables
-$username = $email = '';
+$fullName = $email = '';
 $successMessage = $errorMessage = '';
 
 // Handle registration form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $fullName = $_POST['fullName'];
+    $phoneNumber = $_POST['phoneNumber'];
+    $address = $_POST['address'];
+    $dateOfBirth = $_POST['dateOfBirth'];
     $email = $_POST['email'];
+    $password = $_POST['password'];
+    
 
     // Validate form inputs
-    if (empty($username) || empty($password) || empty($email)) {
+    if (empty($fullName) || empty($phoneNumber)|| empty($address)|| empty($dateOfBirth) || empty($email) || empty($password) ) {
         $errorMessage = "Please fill in all fields";
     } else {
         // Validate and register user
-        $success = registerUser($username, $password, $email);
+        $success = registerUser($fullName, $phoneNumber, $address, $dateOfBirth, $email, $password);
 
         if ($success) {
             $successMessage = "Account registered successfully!";
-            $username = $email = ''; // Reset the form fields
+            $fullName = $email = ''; // Reset the form fields
         } else {
             $errorMessage = "Failed to register account";
         }
@@ -40,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="../dist/img/favicon.ico">
     <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" />
+    <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
     <!-- Mapbox CDN -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet" />
@@ -96,10 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section id="register">
         <div class="container p-5">
             <div class="row align-items-center justify-content-between">
-                <div class="col-md" style="margin-top: 100px;">
-                    <h5>Welcome to San Luis Municipality Police Station </h5>
-                    <h2>Crime Reporting System</h2>
-                    <p class="text-xl-start text-secondary">
+                <div class="col-md" style="margin-top: 9px;" id="welcome">
+                    <h3 class="text-light">Welcome to San Luis Municipality Police Station </h3>
+                    <h2 class="text-warning">Crime Reporting System</h2>
+                    <p class="text-xl-start text-secondary text-light" style="font-size: 20px;">
                         We are committed to delivering the highest degree of professional police services in the
                         municipality.
                     </p>
@@ -121,17 +124,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form method="POST" action="">
                             <!-- Login form fields -->
                             <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <label for="fullName">fullname</label>
+                                <input type="text" class="form-control" id="fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Addresss</label>
+                                <input type="text" class="form-control" id="address" name="address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth"
+                                    name="dateOfBirth" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required
-                                    value="<?php echo $email; ?>">
                             </div>
                         <p class="mt-3">If you have an account already, <a href="../auth/login.php">Login now</a>.</p> 
                             <button type="submit" class="btn btn-primary">Register</button>

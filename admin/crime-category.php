@@ -19,11 +19,12 @@ $currentUserInfo = getUserById($currentUserID);
 
 // Handle form submission for adding a Category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCategory'])) {
-    $CrimeType = htmlspecialchars($_POST['CrimeType']);
+    $crimeName = htmlspecialchars($_POST['crimeName']);
     $description = htmlspecialchars($_POST['description']);
+    $crimeType = htmlspecialchars($_POST['crimeType']);
 
     // Add the Category to the database
-    $result = addCategory($CrimeType, $description);
+    $result = addCategory($crimeName, $description, $crimeType);
 
     if ($result === "Category added successfully.") {
         header("Location: crime-category.php");
@@ -38,11 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCategory'])) {
 // Handle form submission for updating a Category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCategory'])) {
     $categoryID = htmlspecialchars($_POST['categoryID']);
-    $CrimeType = htmlspecialchars($_POST['CrimeType']);
+    $crimeName = htmlspecialchars($_POST['editCrimeName']);
     $description = htmlspecialchars($_POST['description']);
+    $crimeType = htmlspecialchars($_POST['editCrimeType']);
 
     // Update the Category in the database
-    $result = updateCategory($categoryID, $CrimeType, $description);
+    $result = updateCategory($categoryID, $crimeName, $description, $crimeType);
 
     if ($result) {
         $updateSuccessMessage = 'Category updated successfully.';
@@ -86,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
 }
 ?>
 
-<!DOCTYPE html>
+<!DOCcrimeType html>
 <!--
 This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
@@ -97,7 +99,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>San Luis Municipal Police Station</title>
-  <link rel="icon" type="image/x-icon" href="../dist/img/favicon.ico">
+  <link rel="icon" crimeType="image/x-icon" href="../dist/img/favicon.ico">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=fallback">
   <!-- Line Awesome Icons -->
@@ -267,8 +269,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <!-- ADD NEW Category -->
                   <div class="row mb-2">
                     <div class="col-sm-12" style="margin-top: 15px;">
-                      <button type="button" class="btn btn-primary btn-sm float-left" data-toggle="modal"
-                        data-target="#addCategoryModal"><i class="las la-plus-circle"></i> Add New Category</button>
+                      <button crimeType="button" class="btn btn-primary btn-sm float-left" data-toggle="modal"
+                        data-target="#addCategoryModal"><i class="las la-plus-circle"></i> Add New Crime Category</button>
                     </div>
 
                     <!-- Add Category Modal -->
@@ -277,26 +279,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <h5 class="modal-title" id="addCategoryModalLabel">Add New Crime Category</h5>
+                            <button crimeType="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
                           <div class="modal-body">
                             <form method="POST" action="">
                               <div class="form-group">
-                                <label for="CrimeType">Crime Type</label>
-                                <input type="text" class="form-control" id="CrimeType" name="CrimeType"
-                                  placeholder="Enter Crime Type" required>
+                                <label for="crimeName">Crime Name:</label>
+                                <input crimeType="text" class="form-control" id="crimeName" name="crimeName"
+                                  placeholder="Enter Crime Name" required>
                               </div>
                               <div class="form-group">
-                                <label for="description">Description</label>
+                                <label for="description">Description:</label>
                                 <textarea class="form-control" id="description" name="description" rows="3"
                                   placeholder="Enter description" required></textarea>
                               </div>
+                              <div class="form-group">
+                                <label for="crimeType">Crime Type:</label>
+                                <input crimeType="text" class="form-control" id="crimeType" name="crimeType"
+                                  placeholder="Enter Crime Type" required>
+                              </div>
                               <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" name="addCategory">Save</button>
+                                <button crimeType="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button crimeType="submit" class="btn btn-primary" name="addCategory">Save</button>
                               </div>
                             </form>
                           </div>
@@ -308,8 +315,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       <form id="showRecordsForm" method="GET" action="">
                         <div class="form-group">
                           <label class="d-flex align-items-center">
+                          <span class="ml-2"><i class="las la-filter"></i>Show &nbsp</span>
                             <select class="form-control form-control-sm" id="showRecords" name="showRecords"
-                              style="width: 120px;" onchange="this.form.submit()">
+                              style="width: 40px; text-align: center;" onchange="this.form.submit()">
                               <option value="5" <?php if ($limit == 5)
                                   echo 'selected'; ?>>5</option>
                               <option value="10" <?php if ($limit == 10)
@@ -322,7 +330,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                   echo 'selected'; ?>>50
                               </option>
                             </select>
-                            <span class="ml-2"><i class="las la-filter"></i> records per page</span>
+                            <span class="ml-2">records per pages</span>
                           </label>
                         </div>
                       </form>
@@ -333,7 +341,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <form id="searchForm" method="GET" action="">
                           <div class="form-group mx-sm-3 mb-2">
                             <label for="searchInput" class="mr-2"><i class="las la-search"></i> Search:</label>
-                            <input type="text" class="form-control" id="searchInput" name="search"
+                            <input crimeType="text" class="form-control" id="searchInput" name="search"
                               style="max-width: 150px;"
                               value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
                           </div>
@@ -346,8 +354,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Crime Type</th>
+                          <th>Crime Name</th>
                           <th>Description</th>
+                          <th>Crime Type</th>
                           <th style="text-align: center;">Action</th>
                         </tr>
                       </thead>
@@ -355,16 +364,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <?php foreach ($category as $Category): ?>
                             <tr>
                               <td>
-                                <?php echo $Category['CrimeType']; ?>
+                                <?php echo $Category['crimeName']; ?>
                               </td>
                               <td>
                                 <?php echo $Category['description']; ?>
                               </td>
+                              <td>
+                                <?php echo $Category['crimeType']; ?>
+                              </td>
                               <td style="text-align:center;">
-                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
+                                <button crimeType="button" class="btn btn-success btn-sm" data-toggle="modal"
                                   data-target="#editCategoryModal<?php echo $Category['categoryID']; ?>"><i
                                     class="las la-edit"></i> Update</button>
-                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                <button crimeType="button" class="btn btn-danger btn-sm" data-toggle="modal"
                                   data-target="#deleteCategoryModal<?php echo $Category['categoryID']; ?>"><i
                                     class="las la-trash-alt"></i> Delete</button>
                               </td>
@@ -382,7 +394,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                       id="editCategoryModalLabel<?php echo $Category['categoryID']; ?>">
                                       Edit Category
                                     </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button crimeType="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
@@ -390,18 +402,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <form method="POST" action="">
                                       <input type="hidden" name="categoryID" value="<?php echo $Category['categoryID']; ?>">
                                       <div class="form-group">
-                                        <label for="editCrimeType">Category Type</label>
-                                        <input type="text" class="form-control" id="editCrimeType" name="CrimeType"
-                                          value="<?php echo $Category['CrimeType']; ?>" required>
+                                        <label for="editCrimeName">Crime Name</label>
+                                        <input crimeType="text" class="form-control" id="editCrimeName" name="editCrimeName"
+                                          value="<?php echo $Category['crimeName']; ?>" required>
                                       </div>
                                       <div class="form-group">
                                         <label for="editDescription">Description</label>
                                         <textarea class="form-control" id="editDescription" name="description" rows="3"
                                           required><?php echo $Category['description']; ?></textarea>
                                       </div>
+                                      <div class="form-group">
+                                        <label for="editCrimeType">Crime Type</label>
+                                        <input crimeType="text" class="form-control" id="editCrimeType" name="editCrimeType"
+                                          value="<?php echo $Category['crimeType']; ?>" required>
+                                      </div>
                                       <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary" name="updateCategory">Save</button>
+                                        <button crimeType="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button crimeType="submit" class="btn btn-primary" name="updateCategory">Save</button>
                                       </div>
                                     </form>
                                   </div>
@@ -421,7 +438,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                       id="deleteCategoryModalLabel<?php echo $Category['categoryID']; ?>">
                                       Delete Category
                                     </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button crimeType="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
@@ -430,9 +447,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                   </div>
                                   <div class="modal-footer">
                                     <form method="POST" action="">
-                                      <input type="hidden" name="categoryID" value="<?php echo $Category['categoryID']; ?>">
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                      <button type="submit" class="btn btn-danger" name="deleteCategory">Delete</button>
+                                      <input crimeType="hidden" name="categoryID" value="<?php echo $Category['categoryID']; ?>">
+                                      <button crimeType="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                      <button crimeType="submit" class="btn btn-danger" name="deleteCategory">Delete</button>
                                     </form>
                                   </div>
                                 </div>

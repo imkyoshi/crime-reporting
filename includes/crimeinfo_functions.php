@@ -2,68 +2,35 @@
 require_once '../config/db.php';
 require_once '../api/phpqrcode/qrlib.php';
 
+// Retrieving the records of users and crime-category
 function retrieveRecords() {
     global $mysqli;
 
-    $sql = "SELECT u.email, c.CrimeType
+    $sql = "SELECT u.fullName, u.phoneNumber, c.crimeName
             FROM users AS u
-            INNER JOIN crime_category AS c ON (u.id = c.categoryID)";     
+            INNER JOIN crime_category AS c ON (u.id = c.categoryID)
+            ORDER BY c.crimeName ASC";     
 
     $result = $mysqli->query($sql);
-
-    $records = array(); // Initialize an array to store all records
+    $records = array();
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $records[] = array(
-                "email" => $row["email"],
-                "crimeType" => $row["CrimeType"]
+                "fullName" => $row["fullName"],
+                "phoneNumber" => $row["phoneNumber"],
+                "crimeName" => $row["crimeName"]
             );
         }
     } else {
         // Handle the case where no records are found
         // You can leave $records as an empty array in this case
-
-        
     }
 
     return $records;
 }
 
-// function retrieveRecords() {
-//     global $mysqli;
-
-//     $sql = "SELECT users.email, CONCAT (resident_information.firstName, ' ', resident_information.lastName) AS fullName,crime_information.dateTimeOfReport,
-//             crime_information.dateTimeOfIncident, crime_information.placeOfIncident, crime_information.suspectName, crime_information.status
-//             FROM crime_information
-//             JOIN users ON crime_information.crime_id = users.id
-//             JOIN resident_information ON crime_information.crime_id = resident_information.resident_id
-//             WHERE crime_information.crime_id;";    
-
-//     $result = $mysqli->query($sql);
-//     $records = array(); // Initialize an array to store all records
-
-//     if ($result->num_rows > 0) {
-//         while ($row = $result->fetch_assoc()) {
-//             $records[] = array(
-//                 "email" => $row["email"],
-//                 "fullName" => $row["fullName"],
-//                 "dateTimeOfReport" => $row["dateTimeOfReport"],
-//                 "dateTimeOfIncident" => $row["dateTimeOfIncident"],
-//                 "placeOfIncident" => $row["placeOfIncident"],
-//                 "suspectName" => $row["suspectName"],
-//                 "status" => $row["status"]
-//             );
-//         }
-//     } else {
-//         // Handle the case where no records are found
-//         // You can leave $records as an empty array in this case        
-//     }
-
-//     return $records;
-// }
-
-
+// Getting the user by ID
 function getUserById($userId)
 {
     global $mysqli;
@@ -79,6 +46,7 @@ function getUserById($userId)
     return $user;
 }
 
+// Get all Crime info
 function getAllCrimeInfo()
 {
     global $mysqli;
@@ -93,55 +61,51 @@ function getAllCrimeInfo()
 
     return $residents;
 }
+
+// It handles the file upload
 function handleFileUpload($inputName, $uploadDir)
 {
-    // Check if files were uploaded successfully
     if (!empty($_FILES[$inputName]['name'])) {
         $fileName = $_FILES[$inputName]['name'];
 
-        // Ensure the target directory exists
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
         $filePath = $uploadDir . $fileName;
-
-        // Move the uploaded file to the specified directory
         move_uploaded_file($_FILES[$inputName]['tmp_name'], $filePath);
-
-        // Return only the file name without the path
         return $fileName;
     }
 
     return null;
 }
 
-
-
-
-function addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
+//Adding Records
+function addCrimeInfo($fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
 {
     global $mysqli;
 
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE email = ? AND suspectName = ?");
-    $stmt->bind_param("ss", $email, $suspectName);
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM crime_information WHERE fullName = ? AND suspectName = ?");
+    $stmt->bind_param("ss", $fullName, $suspectName);
     $stmt->execute();
     $stmt->bind_result($count);
     $stmt->fetch();
     $stmt->close();
 
     if ($count > 0) {
-        return "Crime Information with this email already exists.";
+        return "Crime Information with this fullName already exists.";
     }
 
     // Generate QR code data
-    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData = "Full Name: " . $fullName . "\n";
+    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
     $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
     $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
     $qrCodeData .= "Place: " . $placeOfIncident . "\n";
     $qrCodeData .= "Suspect: " . $suspectName . "\n";
     $qrCodeData .= "Crime Type: " . $crimetype . "\n";
     $qrCodeData .= "Statement: " . $statement . "\n";
+    $qrCodeData .= "status: " . $status . "\n";
 
     // Generate QR code image and save it
     $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
@@ -157,8 +121,8 @@ function addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIn
     $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
-    $stmt = $mysqli->prepare("INSERT INTO crime_information (email, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode=?, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
-    $stmt->bind_param("sssssssssss", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status);
+    $stmt = $mysqli->prepare("INSERT INTO crime_information (fullName, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode=?, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+    $stmt->bind_param("ssssssssssss", $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status);
     $result = $stmt->execute();
     $stmt->close();
 
@@ -169,17 +133,20 @@ function addCrimeInfo($email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIn
     }
 }
 
-function updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
+// Updating the Records
+function updateCrimeInfo($crime_id, $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
 {
     global $mysqli;
 
     // Generate QR code data
-    $qrCodeData = "Email: " . $email . "\n";
+    $qrCodeData = "Full Name: " . $fullName . "\n";
+    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
     $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
     $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
     $qrCodeData .= "Place: " . $placeOfIncident . "\n";
     $qrCodeData .= "Suspect: " . $suspectName . "\n";
     $qrCodeData .= "Crime Type: " . $crimetype . "\n";
+    $qrCodeData .= "Statement: " . $statement . "\n";
     $qrCodeData .= "status: " . $status . "\n";
     
 
@@ -188,7 +155,6 @@ function updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport,
         . DIRECTORY_SEPARATOR . "dist"
         . DIRECTORY_SEPARATOR . "qrcodes"
         . DIRECTORY_SEPARATOR;
-    // Create the qrcodes directory if it doesn't exist
     if (!is_dir($qrCodePath)) {
         mkdir($qrCodePath, 0777, true);
     }
@@ -198,10 +164,10 @@ function updateCrimeInfo($crime_id, $email, $formFileValidID, $dateTimeOfReport,
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Update data in the database
-    $sql = "UPDATE crime_information SET email=?, formFileValidID=?, dateTimeOfReport=?, dateTimeOfIncident=?, placeOfIncident=?, suspectName=?, statement=?, formFileEvidence=?, CrimeType=?, qrcode=?, status=?
+    $sql = "UPDATE crime_information SET fullName=?, phoneNumber=?, formFileValidID=?, dateTimeOfReport=?, dateTimeOfIncident=?, placeOfIncident=?, suspectName=?, statement=?, formFileEvidence=?, CrimeType=?, qrcode=?, status=?
             WHERE crime_id=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("sssssssssssi", $email, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status, $crime_id);
+    $stmt->bind_param("ssssssssssssi", $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status, $crime_id);
     $result = $stmt->execute();
 
     return $result;
@@ -217,7 +183,7 @@ function updateQRCodeFilename($crime_id, $qrCodeFileName) {
 }
 
 
-
+// Deleting the Records
 function deleteCrimeInfo($crime_id)
 {
     global $mysqli;
@@ -235,6 +201,7 @@ function deleteCrimeInfo($crime_id)
     return $result;
 }
 
+// Pagination Page Limit
 function getCrimeInfoWithLimitAndOffset($limit, $offset)
 {
     global $mysqli;
@@ -245,7 +212,6 @@ function getCrimeInfoWithLimitAndOffset($limit, $offset)
     $stmt->execute();
 
     $result = $stmt->get_result();
-
     $residents = [];
     while ($row = $result->fetch_assoc()) {
         $residents[] = $row;
@@ -256,6 +222,7 @@ function getCrimeInfoWithLimitAndOffset($limit, $offset)
     return $residents;
 }
 
+// Search records
 function getCrimeInfoWithSearchLimitAndOffset($search, $limit, $offset)
 {
     global $mysqli;
@@ -275,6 +242,7 @@ function getCrimeInfoWithSearchLimitAndOffset($search, $limit, $offset)
     return $resident;
 }
 
+// Get total Crime information
 function getTotalCrimeInfoCount()
 {
     global $mysqli;
@@ -290,6 +258,8 @@ function getTotalCrimeInfoCount()
     return 0;
 }
 
+
+// Pagination
 function generatePaginationLinks($currentPage, $totalPages)
 {
     $pagination = '';
@@ -319,6 +289,7 @@ function generatePaginationLinks($currentPage, $totalPages)
     return $pagination;
 }
 
+// Shows Status Entries
 function getStatusEntries($startIndex, $limit)
 {
     $endIndex = $startIndex + $limit - 1;
