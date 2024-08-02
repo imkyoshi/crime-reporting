@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                         </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <?php echo htmlspecialchars($user['username']); ?>
+                                    <?php echo htmlspecialchars($user['fullName']); ?>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <!-- <a class="dropdown-item" href="../auth/user_profile.php">My Profile</a> -->
@@ -255,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
         </div>
     </section>
 
-    <footer class="p-5 bg-dark text-white text-center position-relative">
+    <footer class="p-5 bg-dark text-white text-center position-sticky">
         <div class="container">
             <p class="lead">Copyright &copy; 2023 San Luis Municipality Police Station</p>
             <a href="#" class="position-absolute bottom-0 end-0 p-5">

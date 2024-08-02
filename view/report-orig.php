@@ -72,9 +72,9 @@ if (isset($_GET['logout'])) {
                     <li class="nav-item">
                         <a class="nav-link" href="../index.php#about">About Us</a>
                     </li>
-                                          <li class="nav-item">
-                            <a class="nav-link" href="../index.php#services">Services</a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.php#services">Services</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">

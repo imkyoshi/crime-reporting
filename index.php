@@ -5,8 +5,7 @@ require_once '../crime-reporting/config/db.php';
 require_once '../crime-reporting/includes/functions.php';
 
 $user_id = $_SESSION['user_id'];
-// Retrieve User
-$user = getUserById($user_id);
+$user = getUserById($user_id); // Retrieve User
 
 // Handle logout request
 if (isset($_GET['logout'])) {
@@ -78,7 +77,7 @@ if (isset($_GET['logout'])) {
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <?php echo $user['username']; ?>
+                                    <?php echo $user['fullName']; ?>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <!-- <a class="dropdown-item" href="auth/user_profile.php">My Profile</a> -->
@@ -270,7 +269,7 @@ if (isset($_GET['logout'])) {
     <script src="dist/js/bootstrap.bundle.min.js"></script>
     <script src="plugins/popper/popper.min.js"></script>
     <script src="js/script.js"></script>
-    <script src="dist/js/inspect.js"></script>
+    <!-- <script src="dist/js/inspect.js"></script> -->
 </body>
 
 </html>

@@ -77,7 +77,7 @@ $donutChartData = getDonutChartData();
                         Welcome
                     </div>
                     <div class="info text-warning">
-                        <?= $currentUserInfo['username']; ?>!
+                        <?= $currentUserInfo['fullName']; ?>!
                     </div>
                 </div>
 

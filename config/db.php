@@ -2,7 +2,7 @@
 // Database configuration
 $dbHost = 'localhost';
 $dbUser = 'root';
-$dbPass = 'Otosorb110';
+$dbPass = '/Otosorb110';
 $dbName = 'crime-app';
 
 

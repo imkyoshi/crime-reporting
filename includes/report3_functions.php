@@ -31,7 +31,7 @@
             while ($row = $result->fetch_assoc()) {
                 $records[] = array(
                     "fullName" => $row["fullName"],
-                    "phoneNuber" => $row["phoneNumber"],
+                    "phoneNumber" => $row["phoneNumber"],
                     "crimeName" => $row["crimeName"]
                 );
             }

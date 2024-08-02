@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
                         Welcome
                     </div>
                     <div class="info  text-warning">
-                        <?php echo $currentUserInfo['username']; ?>!
+                        <?php echo $currentUserInfo['fullName']; ?>!
                     </div>
                 </div>
 

@@ -2,8 +2,6 @@
 // Include database connections
 require_once 'db.php';
 
-
-
 function getRecentCrimeInfo($limit = 10) {
     global $mysqli;
 
@@ -92,7 +90,7 @@ function registerUser($fullName, $phoneNumber, $address, $dateOfBirth, $email, $
     global $mysqli;
 
     // Check if the email or fullname already exists
-    $query = "SELECT * FROM users WHERE email = ? OR fullname = ?";
+    $query = "SELECT * FROM users WHERE email = ? OR fullName = ?";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param("ss", $fullName, $email);
     $stmt->execute();
@@ -113,12 +111,12 @@ function registerUser($fullName, $phoneNumber, $address, $dateOfBirth, $email, $
 }
 
 // Function to retrieve a user by username or email
-function getUserByUsernameOrEmail($username, $email)
+function getUserByFullNameOrEmail($fullName, $email)
 {
     global $mysqli;
 
-    $stmt = $mysqli->prepare("SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1");
-    $stmt->bind_param("ss", $username, $email);
+    $stmt = $mysqli->prepare("SELECT * FROM users WHERE fullName = ? OR email = ? LIMIT 1");
+    $stmt->bind_param("ss", $fullName, $email);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
@@ -162,7 +160,7 @@ function addUser($fullName, $phoneNumber, $address, $dateOfBirth, $email, $passw
     global $mysqli;
 
     // Check if the email or fullname already exists
-    $query = "SELECT * FROM users WHERE email = ? OR fullname = ?";
+    $query = "SELECT * FROM users WHERE email = ? OR fullName = ?";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param("ss", $fullName, $email);
     $stmt->execute();

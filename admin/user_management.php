@@ -18,7 +18,7 @@ $currentUserInfo = getUserById($currentUserID);
 
 // HANDLE FORM ADD USER
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
-  $fullName = $_POST['fullname'];
+  $fullName = $_POST['fullName'];
   $phoneNumber = $_POST['phoneNumber'];
   $address = $_POST['address'];
   $dateOfBirth = $_POST['dateOfBirth'];
@@ -146,7 +146,7 @@ $paginationLinks = generatePaginationLinks($currentPage, $totalPages);
                         Welcome
                     </div>
                     <div class="info text-warning">
-                        <?php echo $currentUserInfo['username']; ?>!
+                        <?php echo $currentUserInfo['fullName']; ?>!
                     </div>
                 </div>
 
