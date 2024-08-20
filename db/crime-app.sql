@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 26, 2023 at 06:41 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Aug 20, 2024 at 06:06 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,19 +29,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `crime_category` (
   `categoryID` int(11) NOT NULL,
-  `CrimeType` varchar(50) NOT NULL,
+  `crimeName` varchar(255) NOT NULL,
+  `crimeType` varchar(50) NOT NULL,
   `description` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `crime_category`
---
-
-INSERT INTO `crime_category` (`categoryID`, `CrimeType`, `description`) VALUES
-(1, 'Illegal gamblings', 'Illegal gambling'),
-(2, 'Rape', 'Rape'),
-(3, 'theft', 'theft'),
-(4, 'sex assaults', 'sex assaults');
 
 -- --------------------------------------------------------
 
@@ -51,16 +42,37 @@ INSERT INTO `crime_category` (`categoryID`, `CrimeType`, `description`) VALUES
 
 CREATE TABLE `crime_information` (
   `crime_id` int(11) NOT NULL,
-  `resident_id` int(11) DEFAULT NULL,
-  `category_id` int(11) DEFAULT NULL,
+  `fullName` varchar(255) NOT NULL,
+  `phoneNumber` varchar(255) NOT NULL,
+  `formFileValidID` varchar(255) DEFAULT NULL,
   `dateTimeOfReport` datetime NOT NULL,
   `dateTimeOfIncident` datetime NOT NULL,
   `placeOfIncident` varchar(255) NOT NULL,
   `suspectName` varchar(255) NOT NULL,
   `statement` text NOT NULL,
-  `qrcode` varchar(255) DEFAULT NULL,
-  `evidencFilePath` varchar(255) DEFAULT NULL
+  `formFileEvidence` varchar(255) DEFAULT NULL,
+  `CrimeType` varchar(255) DEFAULT NULL,
+  `qrcode` varchar(255) NOT NULL,
+  `status` enum('Pending','UnderInvestigation','Confirmed') NOT NULL,
+  `dateCreated` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `crime_information`
+--
+DELIMITER $$
+CREATE TRIGGER `before_insert_crime_information` BEFORE INSERT ON `crime_information` FOR EACH ROW BEGIN
+    DECLARE crime_counter INT;
+
+    -- Find the next available crime_counter
+    SELECT IFNULL(MAX(CAST(SUBSTRING(crime_id, 5) AS SIGNED)), 0) + 1 INTO crime_counter
+    FROM crime_information;
+
+    -- Set the new crime_id in the specified format
+    SET NEW.crime_id = CONCAT('CRS-', crime_counter);
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -78,14 +90,24 @@ CREATE TABLE `resident_information` (
   `email` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `resident_information`
+-- Table structure for table `suspect_information`
 --
 
-INSERT INTO `resident_information` (`resident_id`, `firstName`, `lastName`, `dateOfBirth`, `address`, `phoneNumber`, `email`) VALUES
-(1, 'Lowelljay', 'Brosoto', '1998-12-03', '4210 Bagong Tubig, San Luis Batangas', '0949869047', 'lowelljaybrosoto1998@gmail.com'),
-(2, 'test', 'test', '2023-11-14', 'asdasdasdasdasdadasd', '1232123123123', 'lowelljaybrosoto1998@gmail.com'),
-(3, 'officer', 'officer', '2023-11-15', 'asdadad', '1233', 'officer@gmail.com');
+CREATE TABLE `suspect_information` (
+  `SuspectID` int(11) NOT NULL,
+  `FullName` varchar(255) NOT NULL,
+  `DateOfBirth` varchar(255) NOT NULL,
+  `Gender` varchar(255) NOT NULL,
+  `Address` varchar(255) NOT NULL,
+  `PhoneNumber` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Nationality` varchar(255) NOT NULL,
+  `qrcode` varchar(255) NOT NULL,
+  `dateCreated` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -95,27 +117,15 @@ INSERT INTO `resident_information` (`resident_id`, `firstName`, `lastName`, `dat
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `fullName` varchar(255) NOT NULL,
+  `phoneNumber` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `dateOfBirth` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `roles` varchar(20) NOT NULL,
   `resident_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `username`, `password`, `email`, `roles`, `resident_id`) VALUES
-(1, 'admin', '$2y$10$OiCFHdRo6ye4Q5w3TiguouS7Z3CXi17mFa.LKX1DsECcEtQZ.oMS.', 'admin@gmail.com', 'admin', 1),
-(2, 'test', '$2y$10$rIqjsBCHNwzXZGhJtErKlewb696AY7kCsfSQsOJuMGfoGgUcTQf72', 'test@gmail.com', 'user', 2),
-(3, 'officer', '$2y$10$V.aEKUgKKc82ly7FnWJ8JOEuFzmC7VwBW.MWhEWuzYl1QlHPARcGW', 'officer@gmail.com', 'officer', 3),
-(4, 'test1', '$2y$10$b1p7tM9xs9OAZT24Euh60eDFOSCspf.mo8JulmycHx.98bT1R6UvS', 'test1@gmail.com', 'user', NULL),
-(5, 'admin2', '$2y$10$ZrValpVMjBvVT/FLgYVv6eNvP9dbJCNk4KhNv.z/t0zdXjeCLEWE.', 'admin2@gmail.com', 'admin', NULL),
-(6, 'test2', '$2y$10$Q3eoT31LQygkxhVE0HC6UeEqu2stgv1uag.dpPmZPDAbl39FuTagW', 'test2@gmail.com', 'user', NULL),
-(7, 'test3', '$2y$10$qhbAhu1losDsZJlVs2ouR.DzVaX2NBXwPQLS5QcCwp0B7O7ATVdpq', 'test3@gmail.com', 'user', NULL),
-(8, 'test4', '$2y$10$phlVqVtKPIm4CDpo53fl7u3yrUQZGxdPlzVT9Cf65v3IVp9cfPYbC', 'test4@gmail.com', 'officer', NULL),
-(9, 'officer3', '$2y$10$vveiPsQT.GouEI1l6e.c7.jfEXuk7kQgTa0b5YlcSVbNEDyK9pH7y', 'asdad@gmail.com', 'admin', NULL);
 
 --
 -- Indexes for dumped tables
@@ -131,15 +141,19 @@ ALTER TABLE `crime_category`
 -- Indexes for table `crime_information`
 --
 ALTER TABLE `crime_information`
-  ADD PRIMARY KEY (`crime_id`),
-  ADD KEY `resident_id` (`resident_id`),
-  ADD KEY `category_id` (`category_id`);
+  ADD PRIMARY KEY (`crime_id`);
 
 --
 -- Indexes for table `resident_information`
 --
 ALTER TABLE `resident_information`
   ADD PRIMARY KEY (`resident_id`);
+
+--
+-- Indexes for table `suspect_information`
+--
+ALTER TABLE `suspect_information`
+  ADD PRIMARY KEY (`SuspectID`);
 
 --
 -- Indexes for table `users`
@@ -156,7 +170,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `crime_category`
 --
 ALTER TABLE `crime_category`
-  MODIFY `categoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `categoryID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `crime_information`
@@ -168,30 +182,19 @@ ALTER TABLE `crime_information`
 -- AUTO_INCREMENT for table `resident_information`
 --
 ALTER TABLE `resident_information`
-  MODIFY `resident_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `resident_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `suspect_information`
+--
+ALTER TABLE `suspect_information`
+  MODIFY `SuspectID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `crime_information`
---
-ALTER TABLE `crime_information`
-  ADD CONSTRAINT `crime_information_ibfk_1` FOREIGN KEY (`resident_id`) REFERENCES `resident_information` (`resident_id`),
-  ADD CONSTRAINT `crime_information_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `crime_category` (`categoryID`);
-
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_resident` FOREIGN KEY (`resident_id`) REFERENCES `resident_information` (`resident_id`);
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

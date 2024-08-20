@@ -42,7 +42,7 @@ function handleFileUpload($inputName, $uploadDir)
             mkdir($uploadDir, 0777, true);
         }
 
-        $filePath = $uploadDir . $fileName;
+        $filePath = "{$uploadDir}{$fileName}";
 
         // Move the uploaded file to the specified directory
         move_uploaded_file($_FILES[$inputName]['tmp_name'], $filePath);
@@ -73,13 +73,14 @@ function addSuspectInfo($fullName, $dateOfBirth, $gender, $address, $phoneNumber
     }
 
     // Generate QR code data
-    $qrCodeData = "Full Name: " . $fullName . "\n";
-    $qrCodeData .= "Date Of Birth: " . $dateOfBirth . "\n";
-    $qrCodeData .= "Gender: " . $gender . "\n";
-    $qrCodeData .= "Address: " . $address . "\n";
-    $qrCodeData .= "Phone Number: " . $phoneNumber . "\n";
-    $qrCodeData .= "Email: " .  $email . "\n";
-    $qrCodeData .= "Nationality: " . $nationality . "\n";
+    $qrCodeData = "Full Name: {$fullName}\n";
+    $qrCodeData .= "Date Of Birth: {$dateOfBirth}\n";
+    $qrCodeData .= "Gender: {$gender}\n";
+    $qrCodeData .= "Address: {$address}\n";
+    $qrCodeData .= "Phone Number: {$phoneNumber}\n";
+    $qrCodeData .= "Email: {$email}\n";
+    $qrCodeData .= "Nationality: {$nationality}\n";
+    
 
     // Generate QR code image and save it
     $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
@@ -92,7 +93,7 @@ function addSuspectInfo($fullName, $dateOfBirth, $gender, $address, $phoneNumber
     }
 
     $qrCodeFileName = uniqid() . "_" . time() . ".png";
-    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    $qrCodeFullPath = "{$qrCodePath}{$qrCodeFileName}";
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     $stmt = $mysqli->prepare("INSERT INTO suspect_information (FullName, DateOfBirth, Gender, Address, PhoneNumber, Email, Nationality, qrcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -107,18 +108,18 @@ function addSuspectInfo($fullName, $dateOfBirth, $gender, $address, $phoneNumber
     }
 }
 
-function updateSuspectInfo($SuspectID, $fullName, $dateOBirth, $gender, $address, $phoneNumber, $email, $nationality)
+function updateSuspectInfo($SuspectID, $fullName, $dateOfBirth, $gender, $address, $phoneNumber, $email, $nationality)
 {
     global $mysqli;
 
     // Generate QR code data
-    $qrCodeData = "Full Name: " . $fullName . "\n";
-    $qrCodeData .= "Date Of Birth: " . $dateOBirth . "\n";
-    $qrCodeData .= "Gender: " . $gender . "\n";
-    $qrCodeData .= "Address: " . $address . "\n";
-    $qrCodeData .= "Phone Number: " . $phoneNumber . "\n";
-    $qrCodeData .= "Email: " .  $email . "\n";
-    $qrCodeData .= "Nationality " . $nationality . "\n";
+    $qrCodeData = "Full Name: {$fullName}\n";
+    $qrCodeData .= "Date Of Birth: {$dateOfBirth}\n";
+    $qrCodeData .= "Gender: {$gender}\n";
+    $qrCodeData .= "Address: {$address}\n";
+    $qrCodeData .= "Phone Number: {$phoneNumber}\n";
+    $qrCodeData .= "Email: {$email}\n";
+    $qrCodeData .= "Nationality: {$nationality}\n";
     
 
     // Generate QR code image and save it
@@ -132,14 +133,14 @@ function updateSuspectInfo($SuspectID, $fullName, $dateOBirth, $gender, $address
     }
 
     $qrCodeFileName = uniqid() . "_" . time() . ".png";
-    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    $qrCodeFullPath = "{$qrCodePath}{$qrCodeFileName}";
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Update data in the database
     $sql = "UPDATE suspect_information SET FullName=?, DateOfBirth=?, Gender=?, Address=?, PhoneNumber=?, Email=?, Nationality=?, qrcode=?
             WHERE SuspectID=?";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ssssssssi", $fullName, $dateOBirth, $gender, $address, $phoneNumber, $email, $nationality, $qrCodeFileName, $SuspectID);
+    $stmt->bind_param("ssssssssi", $fullName, $dateOfBirth, $gender, $address, $phoneNumber, $email, $nationality, $qrCodeFileName, $SuspectID);
     $result = $stmt->execute();
 
     return $result;

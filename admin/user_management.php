@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addUser'])) {
   }
 }
 
-// HANDLE FORM DELETE USER
+// HANDLE FORM UPDATE USER
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateUser'])) {
     $id = $_POST['editUserId'];
     $fullName = $_POST['editFullName'];

@@ -23,18 +23,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
     // Retrieve form data
     $fullName = $_POST['fullName'];
     $phoneNumber = $_POST['phoneNumber'];
-    $formFileValidID  = handleFileUpload('formFileValidID', __DIR__ 
-    . DIRECTORY_SEPARATOR . 'dist' 
-    . DIRECTORY_SEPARATOR . 'uploads' 
-    . DIRECTORY_SEPARATOR . 'valid_ids' 
-    . DIRECTORY_SEPARATOR);
+    $formFileValidID = handleFileUpload('formFileValidID', __DIR__ 
+        . DIRECTORY_SEPARATOR . 'dist' 
+        . DIRECTORY_SEPARATOR . 'uploads' 
+        . DIRECTORY_SEPARATOR . 'valid_ids' 
+        . DIRECTORY_SEPARATOR);
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
-    $placeOfIncident = $_POST['placeOfIncident']; 
+    $placeOfIncident = $_POST['placeOfIncident'];
     $suspectName = $_POST['suspectName'];
-    $crimetype = $_POST['crimetype'];
+    $crimetype = $_POST['CrimeType'];
     $statement = $_POST['statement'];
-    $formFileEvidence = handleFileUpload('formFileEvidence', __DIR__ . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'evidences' . DIRECTORY_SEPARATOR);
+    $formFileEvidence = handleFileUpload('formFileEvidence', __DIR__ 
+        . DIRECTORY_SEPARATOR . 'dist' 
+        . DIRECTORY_SEPARATOR . 'uploads' 
+        . DIRECTORY_SEPARATOR . 'evidences' 
+        . DIRECTORY_SEPARATOR);
     $status = $_POST['status'];
 
     // Insert data into the database
@@ -69,15 +73,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     $formFileEvidence = handleFileUpload('formFileEvidence', '../dist/uploads/evidence/');
 
     // Generate QR code data
-    $qrCodeData = "Full Name: " . $fullName . "\n";
-    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
-    $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
-    $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
-    $qrCodeData .= "Place: " . $placeOfIncident . "\n";
-    $qrCodeData .= "Suspect: " . $suspectName . "\n";
-    $qrCodeData .= "Crime Type: " . $crimetype . "\n";
-    $qrCodeData .= "Statement: " . $statement . "\n";
-    $qrCodeData .= "status: " . $status . "\n";
+    $qrCodeData = "Full Name: {$fullName}\n";
+    $qrCodeData .= "Mobile No: {$phoneNumber}\n";
+    $qrCodeData .= "Reported At: {$dateTimeOfReport}\n";
+    $qrCodeData .= "Incident At: {$dateTimeOfIncident}\n";
+    $qrCodeData .= "Place: {$placeOfIncident}\n";
+    $qrCodeData .= "Suspect: {$suspectName}\n";
+    $qrCodeData .= "Crime Type: {$crimetype}\n";
+    $qrCodeData .= "Statement: {$statement}\n";
+    $qrCodeData .= "Status: {$status}\n";
 
     
 
@@ -92,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateCrimeInfo'])) {
     }
 
     $qrCodeFileName = uniqid() . "_" . time() . ".png";
-    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    $qrCodeFullPath = "{$qrCodePath} {$qrCodeFileName}";
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
     // Update crime information

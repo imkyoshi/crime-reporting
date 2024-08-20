@@ -81,6 +81,7 @@ function handleFileUpload($inputName, $uploadDir)
 }
 
 //Adding Records
+
 function addCrimeInfo($fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
 {
     global $mysqli;
@@ -97,31 +98,31 @@ function addCrimeInfo($fullName, $phoneNumber, $formFileValidID, $dateTimeOfRepo
     }
 
     // Generate QR code data
-    $qrCodeData = "Full Name: " . $fullName . "\n";
-    $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
-    $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
-    $qrCodeData .= "Incident At: " . $dateTimeOfIncident . "\n";
-    $qrCodeData .= "Place: " . $placeOfIncident . "\n";
-    $qrCodeData .= "Suspect: " . $suspectName . "\n";
-    $qrCodeData .= "Crime Type: " . $crimetype . "\n";
-    $qrCodeData .= "Statement: " . $statement . "\n";
-    $qrCodeData .= "status: " . $status . "\n";
+    $qrCodeData = "Full Name: {$fullName}\n";
+    $qrCodeData .= "Mobile No: {$phoneNumber}\n";
+    $qrCodeData .= "Reported At: {$dateTimeOfReport}\n";
+    $qrCodeData .= "Incident At: {$dateTimeOfIncident}\n";
+    $qrCodeData .= "Place: {$placeOfIncident}\n";
+    $qrCodeData .= "Suspect: {$suspectName}\n";
+    $qrCodeData .= "Crime Type: {$crimetype}\n";
+    $qrCodeData .= "Statement: {$statement}\n";
+    $qrCodeData .= "Status: {$status}\n";
 
     // Generate QR code image and save it
     $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
-    . DIRECTORY_SEPARATOR . "dist" 
-    . DIRECTORY_SEPARATOR . "qrcodes" 
-    . DIRECTORY_SEPARATOR;
+        . DIRECTORY_SEPARATOR . "dist"
+        . DIRECTORY_SEPARATOR . "qrcodes"
+        . DIRECTORY_SEPARATOR;
     // Create the qrcodes directory if it doesn't exist
     if (!is_dir($qrCodePath)) {
         mkdir($qrCodePath, 0777, true);
     }
 
     $qrCodeFileName = uniqid() . "_" . time() . ".png";
-    $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
+    $qrCodeFullPath = "{$qrCodePath}{$qrCodeFileName}";
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
-    $stmt = $mysqli->prepare("INSERT INTO crime_information (fullName, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode=?, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+    $stmt = $mysqli->prepare("INSERT INTO crime_information (fullName, phoneNumber, formFileValidID, dateTimeOfReport, dateTimeOfIncident, placeOfIncident, suspectName, statement, formFileEvidence, CrimeType, qrcode, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssssssssss", $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status);
     $result = $stmt->execute();
     $stmt->close();
@@ -129,9 +130,11 @@ function addCrimeInfo($fullName, $phoneNumber, $formFileValidID, $dateTimeOfRepo
     if ($result) {
         return "Crime Information added successfully.";
     } else {
-        return "Failed to Crime Information resident.";
+        return "Failed to add Crime Information.";
     }
 }
+
+
 
 // Updating the Records
 function updateCrimeInfo($crime_id, $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)

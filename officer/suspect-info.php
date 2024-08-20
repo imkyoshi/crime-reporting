@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addSuspectInfo'])) {
     $result = addSuspectInfo($fullName, $dateOfBirth, $gender, $address, $phoneNumber, $email, $nationality);
 
     if ($result === "Suspect Information added successfully.") {
-        header("Location: ../officer/suspect-info1.php");
+        header("Location: ../officer/suspect-info.php");
         exit;
     } elseif ($result === "Suspect Information with this name already exists.") {
         $addErrorMessage = "Suspect Information already exists.";
