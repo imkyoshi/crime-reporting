@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
     $formFileValidID = handleFileUpload('formFileValidID', __DIR__ 
         . DIRECTORY_SEPARATOR . 'dist' 
         . DIRECTORY_SEPARATOR . 'uploads' 
-        . DIRECTORY_SEPARATOR . 'valid_ids' 
+        . DIRECTORY_SEPARATOR . 'valid_id' 
         . DIRECTORY_SEPARATOR);
     $dateTimeOfReport = $_POST['dateTimeOfReport'];
     $dateTimeOfIncident = $_POST['dateTimeOfIncident'];
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addCrimeInfo'])) {
     $formFileEvidence = handleFileUpload('formFileEvidence', __DIR__ 
         . DIRECTORY_SEPARATOR . 'dist' 
         . DIRECTORY_SEPARATOR . 'uploads' 
-        . DIRECTORY_SEPARATOR . 'evidences' 
+        . DIRECTORY_SEPARATOR . 'evidence' 
         . DIRECTORY_SEPARATOR);
     $status = $_POST['status'];
 
@@ -659,26 +659,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                             required>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label for="formFileValidID"
-                                                                            class="form-label">Upload Valid ID:</label>
+                                                                        <label for="formFileValidID" class="form-label">Upload
+                                                                            Valid ID:</label>
                                                                         <div class="label-wrapper">
                                                                             <input class="form-control" type="file"
-                                                                                id="formFileValidID"
-                                                                                name="formFileValidID" multiple
-                                                                                onchange="previewValidID()">
-                                                                                
+                                                                                id="formFileValidID" name="formFileValidID"
+                                                                                multiple onchange="previewValidID()">
                                                                         </div>
                                                                         <div id="ValidIDPreviews" style="margin-top: 10px;">
-                                                                            <?php if (!empty($crimeinfo['formFileValidID'])): ?>
-                                                                                <img src="<?php echo '../dist/uploads/valid_ids/' . $crimeinfo['formFileValidID']; ?>" alt="Valid ID" style="max-width: 100%; height: 150px;">
-                                                                            <?php endif; ?>
                                                                         </div>
-                                                                        <div id="mediaModal" class="modal">
-                                                                            <span class="close" onclick="closeMediaModal()">&times;</span>
-                                                                            <div id="modalMedia" class="modal-content"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div id="ValidIDPreviews" style="margin-top: 10px;">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="editDateTimeOfReport">Date and Time
@@ -748,7 +737,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                                         </div>
                                                                         <div id="EvidencePreviews" style="margin-top: 10px;">
                                                                             <?php if (!empty($crimeinfo['formFileEvidence'])): ?>
-                                                                                <img src="<?php echo '../dist/uploads/evidences/' . $crimeinfo['formFileEvidence']; ?>" alt="Evidences" style="max-width: 100%; height: 150px;">
+                                                                                <img src="<?php echo '../dist/uploads/evidence/' . $crimeinfo['formFileEvidence']; ?>" alt="evidence" style="max-width: 100%; height: 150px;">
                                                                             <?php endif; ?>
                                                                         </div>
                                                                         <div id="mediaModal" class="modal">
@@ -861,12 +850,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                                                     <div class="form-group px-4">
                                                                         <label>Valid ID:</label><br>
-                                                                        <img src="<?php echo '../dist/uploads/valid_ids/' . $crimeinfo['formFileValidID']; ?>" alt="QR Code" style="max-width: 100%; height: 120px;">
+                                                                        <img src="<?php echo '../dist/uploads/valid_id/' . $crimeinfo['formFileValidID']; ?>" alt="QR Code" style="max-width: 100%; height: 120px;">
                                                                     </div>
 
                                                                     <div class="form-group px-4">
-                                                                        <label>Evidences:</label><br>
-                                                                        <img src="<?php echo '../dist/uploads/evidences/' . $crimeinfo['formFileEvidence']; ?>" alt="QR Code" style="max-width: 100%; height: 120px;">
+                                                                        <label>evidence:</label><br>
+                                                                        <img src="<?php echo '../dist/uploads/evidence/' . $crimeinfo['formFileEvidence']; ?>" alt="QR Code" style="max-width: 100%; height: 120px;">
                                                                     </div>
                                                                     <div class="form-group px-4">
                                                                         <label>Statement:</label>

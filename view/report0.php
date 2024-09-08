@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $suspectName = $_POST['suspect'];
     $crimeType = $_POST['crimetype'];
     $statement = $_POST['exampleTextarea'];
-    $validIDFilePath = handleFileUpload('formFileValidID', '../uploads/valid_ids/');
+    $validIDFilePath = handleFileUpload('formFileValidID', '../uploads/valid_id/');
     $evidenceFilePath = handleFileUpload('formFileEvidence', '../uploads/evidence/');
 
     // Insert data into the database

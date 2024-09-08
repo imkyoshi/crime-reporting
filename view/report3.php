@@ -55,13 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         __DIR__ . DIRECTORY_SEPARATOR . ".."
         . DIRECTORY_SEPARATOR . 'dist'
         . DIRECTORY_SEPARATOR . 'uploads'
-        . DIRECTORY_SEPARATOR . 'valid_ids'
+        . DIRECTORY_SEPARATOR . 'valid_id'
         . DIRECTORY_SEPARATOR);
     $formFileEvidence = handleFileUpload('formFileEvidence',
         __DIR__ . DIRECTORY_SEPARATOR . ".."
         . DIRECTORY_SEPARATOR . 'dist'
         . DIRECTORY_SEPARATOR . 'uploads'
-        . DIRECTORY_SEPARATOR . 'evidences'
+        . DIRECTORY_SEPARATOR . 'evidence'
         . DIRECTORY_SEPARATOR);
 
     // Generate QR code data
@@ -127,6 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../dist/css/report.css" />
 
     <title>SanLuis Municipality Police Station</title>
+    <style>
+        
+    </style>
 </head>
 
 <body>

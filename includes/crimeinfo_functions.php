@@ -3,13 +3,14 @@ require_once '../config/db.php';
 require_once '../api/phpqrcode/qrlib.php';
 
 // Retrieving the records of users and crime-category
-function retrieveRecords() {
+function retrieveRecords()
+{
     global $mysqli;
 
     $sql = "SELECT u.fullName, u.phoneNumber, c.crimeName
             FROM users AS u
-            INNER JOIN crime_category AS c ON (u.id = c.categoryID)
-            ORDER BY c.crimeName ASC";     
+            INNER JOIN crime_category AS c ON u.id = c.categoryID
+            ORDER BY c.crimeName ASC";
 
     $result = $mysqli->query($sql);
     $records = array();
@@ -19,7 +20,7 @@ function retrieveRecords() {
             $records[] = array(
                 "fullName" => $row["fullName"],
                 "phoneNumber" => $row["phoneNumber"],
-                "crimeName" => $row["crimeName"]
+                "crimeName" => $row["crimeName"],
             );
         }
     } else {
@@ -134,14 +135,54 @@ function addCrimeInfo($fullName, $phoneNumber, $formFileValidID, $dateTimeOfRepo
     }
 }
 
-
-
 // Updating the Records
 function updateCrimeInfo($crime_id, $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $status)
 {
     global $mysqli;
 
-    // Generate QR code data
+    // Fetch the existing QR code, formFileValidID, and formFileEvidence from the database
+    $sqlFetchFiles = "SELECT qrcode, formFileValidID, formFileEvidence FROM crime_information WHERE crime_id = ?";
+    $stmtFetchFiles = $mysqli->prepare($sqlFetchFiles);
+    $stmtFetchFiles->bind_param("i", $crime_id);
+    $stmtFetchFiles->execute();
+    $stmtFetchFiles->bind_result($existingQrCode, $existingFormFileValidID, $existingFormFileEvidence);
+    $stmtFetchFiles->fetch();
+    $stmtFetchFiles->close();
+
+    // Define paths for QR code and form files
+    $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . "dist"
+        . DIRECTORY_SEPARATOR . "qrcodes"
+        . DIRECTORY_SEPARATOR;
+        
+    $formFileValidIDPath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . "dist"
+        . DIRECTORY_SEPARATOR . "uploads"
+        . DIRECTORY_SEPARATOR . "valid_id"
+        . DIRECTORY_SEPARATOR;
+        
+    $formFileEvidencePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
+        . DIRECTORY_SEPARATOR . "dist"
+        . DIRECTORY_SEPARATOR . "uploads"
+        . DIRECTORY_SEPARATOR . "evidence"
+        . DIRECTORY_SEPARATOR;
+
+    // Delete the existing QR code file if it exists
+    if (!empty($existingQrCode) && file_exists($qrCodePath . $existingQrCode)) {
+        unlink($qrCodePath . $existingQrCode); // Delete old QR code
+    }
+
+    // Delete the existing formFileValidID file if it exists
+    if (!empty($existingFormFileValidID) && file_exists($formFileValidIDPath . $existingFormFileValidID)) {
+        unlink($formFileValidIDPath . $existingFormFileValidID); // Delete old formFileValidID
+    }
+
+    // Delete the existing formFileEvidence file if it exists
+    if (!empty($existingFormFileEvidence) && file_exists($formFileEvidencePath . $existingFormFileEvidence)) {
+        unlink($formFileEvidencePath . $existingFormFileEvidence); // Delete old formFileEvidence
+    }
+
+    // Generate new QR code data
     $qrCodeData = "Full Name: " . $fullName . "\n";
     $qrCodeData .= "Mobile No: " . $phoneNumber . "\n";
     $qrCodeData .= "Reported At: " . $dateTimeOfReport . "\n";
@@ -150,33 +191,27 @@ function updateCrimeInfo($crime_id, $fullName, $phoneNumber, $formFileValidID, $
     $qrCodeData .= "Suspect: " . $suspectName . "\n";
     $qrCodeData .= "Crime Type: " . $crimetype . "\n";
     $qrCodeData .= "Statement: " . $statement . "\n";
-    $qrCodeData .= "status: " . $status . "\n";
+    $qrCodeData .= "Status: " . $status . "\n";
     
-
-    // Generate QR code image and save it
-    $qrCodePath = __DIR__ . DIRECTORY_SEPARATOR . ".."
-        . DIRECTORY_SEPARATOR . "dist"
-        . DIRECTORY_SEPARATOR . "qrcodes"
-        . DIRECTORY_SEPARATOR;
-    if (!is_dir($qrCodePath)) {
-        mkdir($qrCodePath, 0777, true);
-    }
-
+    // Generate the new QR code file and save it
     $qrCodeFileName = uniqid() . "_" . time() . ".png";
     $qrCodeFullPath = $qrCodePath . $qrCodeFileName;
     QRcode::png($qrCodeData, $qrCodeFullPath);
 
-    // Update data in the database
+    // Update the database with the new files
     $sql = "UPDATE crime_information SET fullName=?, phoneNumber=?, formFileValidID=?, dateTimeOfReport=?, dateTimeOfIncident=?, placeOfIncident=?, suspectName=?, statement=?, formFileEvidence=?, CrimeType=?, qrcode=?, status=?
             WHERE crime_id=?";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("ssssssssssssi", $fullName, $phoneNumber, $formFileValidID, $dateTimeOfReport, $dateTimeOfIncident, $placeOfIncident, $suspectName, $statement, $formFileEvidence, $crimetype, $qrCodeFileName, $status, $crime_id);
+    
     $result = $stmt->execute();
 
     return $result;
 }
 
-function updateQRCodeFilename($crime_id, $qrCodeFileName) {
+
+function updateQRCodeFilename($crime_id, $qrCodeFileName)
+{
     global $mysqli;
 
     $stmt = $mysqli->prepare("UPDATE crime_information SET qrcode = ? WHERE crime_id = ?");
@@ -184,7 +219,6 @@ function updateQRCodeFilename($crime_id, $qrCodeFileName) {
     $stmt->execute();
     $stmt->close();
 }
-
 
 // Deleting the Records
 function deleteCrimeInfo($crime_id)
@@ -260,7 +294,6 @@ function getTotalCrimeInfoCount()
 
     return 0;
 }
-
 
 // Pagination
 function generatePaginationLinks($currentPage, $totalPages)

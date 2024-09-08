@@ -4,6 +4,34 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+/* Ensure the modal covers the full screen */
+#mediaModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* Black with opacity */
+}
+/* Centering the modal content */
+#modalMedia {
+    margin: auto;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 90vw; /* Set maximum width relative to viewport */
+    max-height: 80vh; /* Set maximum height relative to viewport */
+    object-fit: contain; /* Ensure the image maintains aspect ratio */
+    position: relative;
+    border: none;
+    background: transparent;
+    background-repeat: no-repeat;
+}
+
+
 .navbar .getstarted {
     background: #106eea;
     margin-left: 30px;
@@ -104,6 +132,9 @@ body::before {
     transform: scale(1.5);
     transition: transform 0.3s ease-in-out;
 }
+
+
+
 
 
 #login {
